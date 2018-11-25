@@ -10,11 +10,13 @@ Solution:
 This data visualisation will help to inform about plastic pollution of the ocean, so people realise what’s happening, get to know the size of the problem and hopefully get inspired to do something about it.
 
 Main features: 
+
 The minimum viable product: 
 -	A map of the world which shows the amount of plastic production per country. 
 -	A map of the world which shows the plastic flows in the ocean. The idea is to show with differences in colours where the most plastic flows are located, so that people can see the connection between the locations where the plastic flows are the biggest and the locations where the production of plastic is the highest. 
 -	A line graph that shows the production of plastic all over the world over several amount of years, to show how much it has risen. 
 -	A line graph that shows the plastic waste all over the world over a several amount of years. 
+
 Parts that are optional to implement: 
 -	The map of the world in colours. Darker colours will mean that the production of plastic is high in that country, lighter colours will mean less production of plastic. 
 -	To show these maps for every year since 1970 (for example), so that people can see how gigantic the rise of plastic pollution has been, and how fast is has happened. 
