@@ -31,10 +31,15 @@ Parts that are optional to implement:
 <b> External components: </b>
 
 SQLite library: for selection of data in datafiles. 
+
 D3.js library: to create a dynamic and interactive data visualisation. 
-Processing? 
-Mapbox Studio: see below (for map representation)
-Natural Earth: see below (for map representation) 
+
+Mapbox Studio: for map representation. Website: https://www.mapbox.com/atlas/. 
+
+Natural Earth: for map representation. Website: https://www.naturalearthdata.com/. 
+
+Looker: Website: https://looker.com/learn/recorded-demo?utm_campaign=70144000000qHoz&utm_keyword=data%20visualisation&_bt=285933731425&_bm=p&utm_ppccampaign=eu_product_visualization_demo&gclid=EAIaIQobChMI392Gtbzw3gIVROR3Ch09NQj0EAAYAiAAEgKZ-fD_BwE. 
+
 
 <b> Review of a similar visualisation: </b>
 
