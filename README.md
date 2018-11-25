@@ -3,7 +3,7 @@
 
 Jikke van den Ende, 10787593
 
-Problem statement: 
+<b> Problem statement: </b>
 Even though worldwide plastic pollution is a well-known problem, every year more than 8 million tons of plastic is being dumped in the ocean. The production of plastic has risen for more than 300 million tonnes since 1970. More plastic production means more plastic waste, which means that the plastic soup in the ocean becomes bigger and bigger. The problems are big companies that have the power, only a few (in comparison) small organisations that take action and awareness in general. People need to be more aware of the size of this problem and what the consequences are if nothing is going to change.  
 
 Solution: 
