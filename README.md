@@ -66,16 +66,15 @@ generation, 2010', 'Share of plastic waste that is inadequately managed, 2010'
 
 ### External components:
 
-Pandas: to convert the CSV files to json files.
-D3: to create a dynamic and interactive data visualisation (bar- and piecharts).
-Datamaps: to create the maps of the world.
+Pandas: to convert the CSV files to json files.  
+D3: to create a dynamic and interactive data visualisation (bar- and piecharts).  
+Datamaps: to create the maps of the world.  
 
 ### Review of a similar visualisation:
 
 The data visualisation on this website: https://app.dumpark.com/seas-of-plastic-2/#oceans/MED.
 
-This visualisation shows sailing seas of plastic all over the world. They use data from 2007 to 2013, gathered by sailing expeditions. They also show the concentration of t he flow (what kind of plastic is in it). They display the flows with the colour white, the more vague the colour is, the less the density is of that part of the flow. So bright white means a high density of plastic. Personally I think it's an okay representation, but it could have been more clear. And for me it would be interesting to see how the flow changes over years, because that would show the size of the problem in terms of how it rises every year.
-They used Mapbox Studio and Natural Earth for their visualisation. I read some things on the Mapbox Studio and it sounds like a nice tool to use for creating a map/atlas for my visuals. The same for Natural Earth.
+This visualisation shows sailing seas of plastic all over the world. They use data from 2007 to 2013, gathered by sailing expeditions. They also show the concentration of t he flow (what kind of plastic is in it). They display the flows with the colour white, the more vague the colour is, the less the density is of that part of the flow. So bright white means a high density of plastic. Personally I think it's an okay representation, but it could have been more clear. And for me it would be interesting to see how the flow changes over years, because that would show the size of the problem in terms of how it rises every year. They used Mapbox Studio and Natural Earth for their visualisation, but I think these programs are too complex for using now. 
 
 
 ### Hardest parts of project:
