@@ -1,5 +1,6 @@
 # Final Project Minor Programming
-# Our fight against the Plastic Soup
+
+## Our fight against the Plastic Soup
 
 Name: Jikke van den Ende
 Student number: 10787593
@@ -63,13 +64,13 @@ particles in the oceans, and the different kinds of plastic particles.
 generation, 2010', 'Share of plastic waste that is inadequately managed, 2010'
 'Mismanaged waste (% global total), 2010' and 'Global plastics production'.
 
-## External components:
+### External components:
 
 Pandas: to convert the CSV files to json files.
 D3: to create a dynamic and interactive data visualisation (bar- and piecharts).
 Datamaps: to create the maps of the world.
 
-## Review of a similar visualisation:
+### Review of a similar visualisation:
 
 The data visualisation on this website: https://app.dumpark.com/seas-of-plastic-2/#oceans/MED.
 
@@ -77,7 +78,7 @@ This visualisation shows sailing seas of plastic all over the world. They use da
 They used Mapbox Studio and Natural Earth for their visualisation. I read some things on the Mapbox Studio and it sounds like a nice tool to use for creating a map/atlas for my visuals. The same for Natural Earth.
 
 
-## Hardest parts of project:
+### Hardest parts of project:
 
 I think the hardest part of my project is the clearity and connectivity of the
 different visualisations. First, I wanted to show the plastic flows in the
