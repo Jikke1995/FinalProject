@@ -2,8 +2,8 @@
 
 ## Our fight against the Plastic Soup
 
-Name: Jikke van den Ende
-Student number: 10787593
+Name: Jikke van den Ende  
+Student number: 10787593  
 Application goals: Inform people in general about world wide plastic pollution
 of the oceans, and create awareness of the size of this problem.
 
