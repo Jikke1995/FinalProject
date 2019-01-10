@@ -1,0 +1,15 @@
+/* Name: Jikke van den end_year
+Student number: 10787593
+This css file sets the style for the linked_views html file */
+
+.caption {
+    position: absolute;
+    top: 45%;
+    left: 0;
+    width: 100%;
+}
+.jumbotron.text-center p {
+    font-size: 5vw;
+    font-weight: bold;
+    color: ghostwhite;
+}
