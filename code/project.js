@@ -10,6 +10,10 @@ country.
 
 window.onload = function() {
 
-  var map = new Datamap({element: document.getElementById('container')});
+  var place = document.getElementById('container');
+  console.log(place);
+
+  var map = new Datamap({element: document.getElementById('container'), height: 400 , width: 900});
+  console.log(document.getElementById('container').offsetWidth)
 
 };
