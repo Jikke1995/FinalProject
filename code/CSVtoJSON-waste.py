@@ -32,12 +32,12 @@ def select_data(file):
     # Read csv file
     reader = csv.DictReader(file)
     data = {}
-    # In this case, selects the amount of global plastic production per year
+    datapoint = {}
+    # In this case, selects the amount of plastic waste per country
     for row in reader:
-        data[row['Code']] = row['Plastic waste generation (tonnes']
-        # data[row['Year']] = row['Global plastics production (million tonnes) (tonnes)']
+        datapoint['plastic-waste'] = row['Plastic waste generation (tonnes']
+        data[row['Code']] = datapoint
 
-    print(data)
     return data
 
 if __name__ == "__main__":

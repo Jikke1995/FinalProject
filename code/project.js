@@ -10,10 +10,69 @@ country.
 
 window.onload = function() {
 
-  var place = document.getElementById('container');
-  console.log(place);
-
-  var map = new Datamap({element: document.getElementById('container'), height: 400 , width: 900});
-  console.log(document.getElementById('container').offsetWidth)
+  d3v5.json("plastic-waste-generation-total.json").then(function(data){
+      createMap(data);
+  });
 
 };
+
+function createMap(data) {
+
+  dataset = data;
+
+  Object.keys(dataset).forEach(function(country) {
+    dataset[country]["fillKey"] = "DATA AVAILABLE";
+  });
+
+    var map = new Datamap({
+      element: document.getElementById('container'),
+      responsive: true,
+      // height: 400,
+      // width: 900,
+      fills: {
+          "DATA AVAILABLE": "#ABDDA4",
+          defaultFill: "#556e52"
+      },
+      data: dataset,
+      geographyConfig: {
+          popupTemplate: function(geo, data) {
+            if(dataset[geo.id] !== undefined) {
+                return ['<div class="hoverinfo"><strong>',
+                      geo.properties.name,
+                      '</strong>',
+                       ': ' + dataset[geo.id]['plastic-waste'],
+                      '</div>'].join('');
+            }
+                return ['<div class="hoverinfo"><strong>',
+                      geo.properties.name,
+                      '</strong>',
+                      ': no data available',
+                      '</div>'].join('');
+          },
+          highlightFillColor: function(data) {
+            if(data.fillKey) {
+              return '#FC8D59';
+            }
+            return "#556e52"
+          },
+          highlightBorderColor: function(data) {
+            if(data.fillKey) {
+              'rgba(250, 15, 160, 0.2)'
+            }
+          }
+      },
+      done: function(datamap) {
+          datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography) {
+              if(data[geography.id] !== undefined){
+                  updateBarchart(data, geography.id);
+              }
+          });
+      }
+    });
+
+    // map.legend({
+    //   defaultFillName: 'NO DATA AVAILABLE:',
+    //   responsive: true,
+    //   legendTitle: 'MAP LEGEND'});
+
+}

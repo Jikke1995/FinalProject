@@ -19,4 +19,6 @@ gekeken hoe ik een animatie-lijngrafiek als eerste visualisatie (om de
 aandacht te trekken) te creëeren maar daar kwam ik nog niet helemaal uit.
 
 ### Day 4 (14/01/2019)
-Vandaag heb ik alle data correct ingeladen en samengevoegd. 
+Vandaag heb ik alle data correct ingeladen en samengevoegd, en de eerste
+data in een datamap ingeladen. De tooltip verschijnt wel opeens erg hoog,
+dus moet dat nog debuggen. 
