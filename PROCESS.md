@@ -11,4 +11,12 @@ Vandaag geprobeerd de csv data bestanden om te zetten naar json. Er zitten wat
 gekkigheden in de csv bestanden, dus morgen hier nog even naar kijken en dan
 omzetten. Verder de datamap op de visualisatie pagina gezet (blijft nog even
 zoeken naar hoe het precies werkt met goede verhoudingen etc. zodat het netjes
-op de pagina staat). Verder de pagina's verder aangepast qua design. 
+op de pagina staat). Verder de pagina's verder aangepast qua design.
+
+### Day 3 (11/01/2019)
+Vandaag ben ik niet erg productief geweest. Heb uiteindelijk alleen
+gekeken hoe ik een animatie-lijngrafiek als eerste visualisatie (om de
+aandacht te trekken) te creëeren maar daar kwam ik nog niet helemaal uit.
+
+### Day 4 (14/01/2019)
+Vandaag heb ik alle data correct ingeladen en samengevoegd. 

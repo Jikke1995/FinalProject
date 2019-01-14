@@ -9,8 +9,8 @@ import csv
 import pandas as pd
 import json
 
-INPUT_CSV = "global-plastics-production.csv"
-OUTPUT_JSON = "global-plastic-production.json"
+INPUT_CSV = "plastic-waste-generation-total.csv"
+OUTPUT_JSON = "plastic-waste-generation-total.json"
 
 def convert_into_json_file(data):
     """
@@ -34,8 +34,10 @@ def select_data(file):
     data = {}
     # In this case, selects the amount of global plastic production per year
     for row in reader:
-        data[row['Year']] = row['Global plastics production (million tonnes) (tonnes)']
+        data[row['Code']] = row['Plastic waste generation (tonnes']
+        # data[row['Year']] = row['Global plastics production (million tonnes) (tonnes)']
 
+    print(data)
     return data
 
 if __name__ == "__main__":
