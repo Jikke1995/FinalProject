@@ -12,16 +12,44 @@ window.onload = function() {
 
   d3v5.json("plastic-waste-generation-total.json").then(function(data){
       createMap(data);
+      donutChart(data);
   });
 
 };
+
+// function createDonut(data) {
+//     var path = svg.datum(data).selectAll("path")
+//           .data(pie)
+//         .enter().append("path")
+//           .attr("fill", "red")
+//           .attr("d", arc)
+//           .each(function(d) {this._current = d; });
+// }
 
 function createMap(data) {
 
   dataset = data;
 
   Object.keys(dataset).forEach(function(country) {
-    dataset[country]["fillKey"] = "DATA AVAILABLE";
+    datapoint = roundToTwo(dataset[country]['plastic-waste']) / 1000000
+    if(datapoint < 1) {
+        dataset[country]["fillKey"] = "LOW";
+    }
+    else if(datapoint > 1 && datapoint < 3 ) {
+        dataset[country]["fillKey"] = "LOW+";
+    }
+    else if(datapoint > 3 && datapoint < 5 ) {
+        dataset[country]["fillKey"] = "LOW++";
+    }
+    else if(datapoint > 5 && datapoint < 10) {
+        dataset[country]["fillKey"] = "LOW+++";
+    }
+    else if(datapoint > 10 && datapoint < 30) {
+      dataset[country]["fillKey"] = "LOW++++";
+    }
+    else {
+        dataset[country]["fillKey"] = "HIGH";
+    }
   });
 
     var map = new Datamap({
@@ -30,8 +58,13 @@ function createMap(data) {
       // height: 400,
       // width: 900,
       fills: {
-          "DATA AVAILABLE": "#ABDDA4",
-          defaultFill: "#556e52"
+          defaultFill: "#d9f2e4",
+          "LOW": "#9fdfbc",
+          "LOW+": "66cc94",
+          "LOW++": "3cb371",
+          "LOW+++": "267349",
+          "LOW++++": "#267349",
+          "HIGH": "194d30",
       },
       data: dataset,
       geographyConfig: {
@@ -40,7 +73,8 @@ function createMap(data) {
                 return ['<div class="hoverinfo"><strong>',
                       geo.properties.name,
                       '</strong>',
-                       ': ' + dataset[geo.id]['plastic-waste'],
+                       ': ' + (roundToTwo(dataset[geo.id]['plastic-waste'] / 1000000)),
+                       ' million tonnes',
                       '</div>'].join('');
             }
                 return ['<div class="hoverinfo"><strong>',
@@ -75,4 +109,65 @@ function createMap(data) {
     //   responsive: true,
     //   legendTitle: 'MAP LEGEND'});
 
+}
+
+function roundToTwo(num) {
+    return +(Math.round(num + "e+2")  + "e-2");
+}
+
+function donutChart(data) {
+
+    var width = 960,
+        height = 500
+        radius = Math.min(width, height) / 2;
+
+    var color = d3.scale.category20();
+
+    var pie = d3.layout.pie()
+                .value(function(d) {
+                  return d['plastic-waste'];
+                })
+                .sort(null);
+
+    var arc = d3.svg.arc()
+                .innerRadius(radius - 100)
+                .outerRadius(radius- 20);
+
+    var svg = d3.select("#donut").append('svg')
+                .attr("width", width)
+                .attr("height", height)
+              .append("g")
+              .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+    // var path = svg.datum(data).selectAll("path")
+    //       .data(pie)
+    //     .enter().append("path")
+    //       .attr("fill", "red")
+    //       .attr("d", arc)
+    //       .each(function(d) {this._current = d; });
+
+    // var arc = d3v5.arc()
+    //             .outerRadius(200 - 10)
+    //             .innerRadius(100);
+    //
+    // var pie = d3v5.pie()
+    //             .sort(null)
+    //             .value(function(d) {
+    //               return d["plastic-waste"];
+    //             });
+    //
+    // var svg = d3v5.select('#donut')
+    //             .append("svg")
+    //             .attr("width", 540)
+    //             .attr("height", 540)
+    //             .append("g")
+    //             .attr("transform", "translate(270, 270)");
+    //
+    // var g = svg.selectAll(".arc")
+    //             .data(pie(data))
+    //             .enter().append("g");
+    //
+    // g.append("path")
+    //   .attr("d", arc)
+    //   .style("fill", "red");
 }

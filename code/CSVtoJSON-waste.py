@@ -37,6 +37,7 @@ def select_data(file):
     for row in reader:
         datapoint['plastic-waste'] = row['Plastic waste generation (tonnes']
         data[row['Code']] = datapoint
+        datapoint = {}
 
     return data
 
