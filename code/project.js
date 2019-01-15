@@ -10,21 +10,33 @@ country.
 
 window.onload = function() {
 
-  d3v5.json("plastic-waste-generation-total.json").then(function(data){
-      createMap(data);
-      donutChart(data);
+  var requests = [d3v5.json("plastic-waste-generation-total.json"), d3v5.json("inadequately-managed-plastic.json")];
+
+  Promise.all(requests).then(function(response) {
+      data_waste = response[0];
+      data_miswaste = response[1];
+      dataset = combineData(data_waste, data_miswaste);
+      console.log(dataset);
+      createMap(dataset);
+      donutChart(dataset);
+
+  }).catch(function(e){
+       throw(e);
   });
 
 };
 
-// function createDonut(data) {
-//     var path = svg.datum(data).selectAll("path")
-//           .data(pie)
-//         .enter().append("path")
-//           .attr("fill", "red")
-//           .attr("d", arc)
-//           .each(function(d) {this._current = d; });
-// }
+function combineData(data1, data2) {
+  Object.keys(data1).forEach(function(d) {
+      Object.keys(data2).forEach(function(s) {
+        if(s === d) {
+          data1[d]['mismanaged'] = data2[s];
+        };
+      });
+  });
+
+  return data1;
+}
 
 function createMap(data) {
 
@@ -98,7 +110,7 @@ function createMap(data) {
       done: function(datamap) {
           datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography) {
               if(data[geography.id] !== undefined){
-                  updateBarchart(data, geography.id);
+                  updatePieChart(data, 'oranges');
               }
           });
       }
@@ -117,57 +129,70 @@ function roundToTwo(num) {
 
 function donutChart(data) {
 
+    console.log(data);
+    // HIER MOET IK DATA BRUIKBAAR MAKEN VOOR PIE CHART
+
     var width = 960,
         height = 500
         radius = Math.min(width, height) / 2;
 
-    var color = d3.scale.category20();
+    const svg = d3v5.select("#donut")
+        .append('svg')
+            .attr("width", width)
+            .attr("height", height)
+        .append("g")
+            .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
-    var pie = d3.layout.pie()
+    const color = d3v5.scaleOrdinal(["#66c2a5","#fc8d62","#8da0cb",
+         "#e78ac3","#a6d854","#ffd92f"]);
+
+    const pie = d3v5.pie()
                 .value(function(d) {
-                  return d['plastic-waste'];
+                  return d['mismanaged'];
                 })
                 .sort(null);
 
-    var arc = d3.svg.arc()
+    const arc = d3v5.arc()
                 .innerRadius(radius - 100)
-                .outerRadius(radius- 20);
+                .outerRadius(radius- 20)
 
-    var svg = d3.select("#donut").append('svg')
-                .attr("width", width)
-                .attr("height", height)
-              .append("g")
-              .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+    console.log(data['ALB']);
 
-    // var path = svg.datum(data).selectAll("path")
-    //       .data(pie)
-    //     .enter().append("path")
-    //       .attr("fill", "red")
-    //       .attr("d", arc)
-    //       .each(function(d) {this._current = d; });
+    const path = svg.selectAll("path")
+            .data(pie(data['ALB']));
 
-    // var arc = d3v5.arc()
-    //             .outerRadius(200 - 10)
-    //             .innerRadius(100);
-    //
-    // var pie = d3v5.pie()
-    //             .sort(null)
-    //             .value(function(d) {
-    //               return d["plastic-waste"];
-    //             });
-    //
-    // var svg = d3v5.select('#donut')
-    //             .append("svg")
-    //             .attr("width", 540)
-    //             .attr("height", 540)
-    //             .append("g")
-    //             .attr("transform", "translate(270, 270)");
-    //
-    // var g = svg.selectAll(".arc")
-    //             .data(pie(data))
-    //             .enter().append("g");
-    //
-    // g.append("path")
-    //   .attr("d", arc)
-    //   .style("fill", "red");
+    path.enter().append("path")
+        .attr("fill", function(d, i) {
+            return color(i);
+        })
+        .attr("d", arc)
+        .attr("stroke", "white")
+        .attr("stroke-width", "6px")
+        .each(function(d) { return data[d];  });
+
+}
+
+function arcTween(a) {
+    const i = d3.interpolate(this._current, a);
+    this._current = i(1);
+    return (t) => arc(i(t));
+}
+
+function updatePieChart(data, country) {
+
+    const path = svg.selectAll("path")
+            .data(data[country]);
+
+    path.transition().duration(200).attrTween("d", arcTween);
+
+    path.enter().append("path")
+        .attr("fill", function(d, i) {
+            return color(i)
+        })
+        .attr("d", arc)
+        .attr("stroke", "white")
+        .attr("stroke-width", "6px")
+        .each(function(d) { this._current = d;  });
+}
+
 }
