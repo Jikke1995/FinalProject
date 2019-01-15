@@ -1,6 +1,6 @@
 # Styleguide
 
-**Rule 1**: Use single quotes for strings (*‘blop’* not *“blop”*). This looks the neatest. Only use double quotes to avoid escaping (*“<div class=’box’>”*).
+**Rule 1**: Use single quotes for strings (*‘blop’* not *“blop”*). This looks the neatest. Only use double quotes to avoid escaping..
 
 **Rule 2**: Put each new method on its own indented line. It helps to make your code neat and understandable.
 *var provinces = svg.selectAll(“province”)
