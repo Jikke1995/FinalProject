@@ -10,12 +10,13 @@ country.
 
 window.onload = function() {
 
-  var requests = [d3v5.json("plastic-waste-generation-total.json"), d3v5.json("inadequately-managed-plastic.json")];
+  var requests = [d3v5.json("plastic-waste-generation-total.json"), d3v5.json("inadequately-managed-plastic.json"), d3v5.json("mismanaged-waste-global-total.json")];
 
   Promise.all(requests).then(function(response) {
       data_waste = response[0];
       data_miswaste = response[1];
-      dataset = combineData(data_waste, data_miswaste);
+      data_global_miswaste = response[2];
+      dataset = combineData(data_waste, data_miswaste, data_global_miswaste);
       console.log(dataset);
       createMap(dataset);
       donutChart(dataset);
@@ -26,12 +27,15 @@ window.onload = function() {
 
 };
 
-function combineData(data1, data2) {
+function combineData(data1, data2, data3) {
   Object.keys(data1).forEach(function(d) {
       Object.keys(data2).forEach(function(s) {
-        if(s === d) {
-          data1[d]['mismanaged'] = data2[s];
-        };
+        Object.keys(data3).forEach(function(t) {
+          if(s === d && s === t) {
+            data1[d]['Percentage Mismanaged Waste'] = data2[s];
+            data1[d]['Percentage Global Mismanaged Waste'] = data3[t];
+          };
+        })
       });
   });
 
@@ -43,7 +47,7 @@ function createMap(data) {
   dataset = data;
 
   Object.keys(dataset).forEach(function(country) {
-    datapoint = roundToTwo(dataset[country]['plastic-waste']) / 1000000
+    datapoint = roundToTwo(dataset[country]['Plastic Waste']) / 1000000
     if(datapoint < 1) {
         dataset[country]["fillKey"] = "LOW";
     }
@@ -110,7 +114,7 @@ function createMap(data) {
       done: function(datamap) {
           datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography) {
               if(data[geography.id] !== undefined){
-                  updatePieChart(data, 'oranges');
+                  console.log('hoi');
               }
           });
       }
@@ -129,37 +133,52 @@ function roundToTwo(num) {
 
 function donutChart(data) {
 
-    console.log(data);
-    // HIER MOET IK DATA BRUIKBAAR MAKEN VOOR PIE CHART
+    dataset = []
+    datapoint = {}
+    Object.keys(data).forEach(function(d) {
+        datapoint['Land'] = data[d]['Landname'];
+        datapoint['Percentage'] = data[d]['Percentage Global Mismanaged Waste']
+        datapoint['Own Percentage'] = data[d]['Percentage Mismanaged Waste']
+        dataset.push(datapoint);
+        datapoint = {};
+    });
 
-    var width = 960,
-        height = 500
+    console.log(dataset);
+
+    svg_width = 800;
+    svg_height = 600;
+
+    var width = 600,
+        height = 400,
         radius = Math.min(width, height) / 2;
+
 
     const svg = d3v5.select("#donut")
         .append('svg')
-            .attr("width", width)
-            .attr("height", height)
+            .attr("width", svg_width)
+            .attr("height", svg_height)
         .append("g")
-            .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+            .attr("transform", "translate(" + svg_width / 2 + "," + svg_height / 2 + ")");
 
-    const color = d3v5.scaleOrdinal(["#66c2a5","#fc8d62","#8da0cb",
+    var color = d3v5.scaleOrdinal(["#66c2a5","#fc8d62","#8da0cb",
          "#e78ac3","#a6d854","#ffd92f"]);
 
-    const pie = d3v5.pie()
+    var pie = d3v5.pie()
                 .value(function(d) {
-                  return d['mismanaged'];
+                    return d.Percentage;
                 })
                 .sort(null);
 
-    const arc = d3v5.arc()
-                .innerRadius(radius - 100)
-                .outerRadius(radius- 20)
+    var arc = d3v5.arc()
+                .innerRadius(radius - 20)
+                .outerRadius(radius - 100);
 
-    console.log(data['ALB']);
+    var path = svg.selectAll('path')
+          .data(pie(dataset));
 
-    const path = svg.selectAll("path")
-            .data(pie(data['ALB']));
+    // // Update existing arcs
+    // path.transition().duration(200).attrTween("d", arcTween);
+    //
 
     path.enter().append("path")
         .attr("fill", function(d, i) {
@@ -167,10 +186,113 @@ function donutChart(data) {
         })
         .attr("d", arc)
         .attr("stroke", "white")
-        .attr("stroke-width", "6px")
-        .each(function(d) { return data[d];  });
+        .attr("stroke-width", "0.5px");
+
+    d3v5.selectAll('path').call(toolTip);
+
+    function toolTip(selection) {
+
+        selection.on('mouseenter', function(data) {
+
+        svg.append('text')
+            .attr('class', 'toolCircle')
+            .attr('dy', 0)
+            .html(toolTipHTML(data))
+            .style('font-size', '.9em')
+            .style('text-anchor', 'middle');
+
+        svg.append('circle')
+            .attr('class', 'toolCircle')
+            .attr('r', (radius * 0.45))// radius of tooltip circle
+            .style('fill', 'red') // colour based on category mouse is over
+            .style('fill-opacity', 0.35);
+
+        });
+
+        selection.on('mouseout', function() {
+            d3v5.selectAll('.toolCircle').remove();
+        });
+
+        selection.on('mousedown', function(data) {
+            secondLayerDonutChart(data.data, svg);
+        });
+    }
 
 }
+
+function secondLayerDonutChart(data, svg) {
+
+      console.log(data);
+      data['Rest Percentage'] = 100 - data['Own Percentage']
+      console.log(data);
+
+      dataset = []
+      datapoint = {}
+      datapoint['Land'] = data['Land'];
+      datapoint['Percentage'] = data['Own Percentage'];
+      dataset.push(datapoint);
+      datapoint = {};
+      datapoint['Land'] = 'World'
+      datapoint['Percentage'] = data['Rest Percentage']
+      dataset.push(datapoint);
+
+      svg.select('#hoi').remove();
+
+      svg.append('g')
+          .attr("id", "hoi");
+
+      var width = 600,
+          height = 400,
+          radius = Math.min(width, height) / 2;
+
+      var color = d3v5.scaleOrdinal(["#66c2a5","#fc8d62","#8da0cb",
+               "#e78ac3","#a6d854","#ffd92f"]);
+
+      var pie = d3v5.pie()
+                    .value(function(d) {
+                        return d.Percentage;
+                    })
+                    .sort(null);
+
+      var arc = d3v5.arc()
+                  .innerRadius(radius - 10)
+                  .outerRadius(radius + 70);
+
+      var path = svg.select('#hoi').selectAll('path')
+            .data(pie(dataset));
+
+      // Update existing arcs
+      // path.transition().duration(200).attrTween("d", arcTween);
+
+      path.enter().append("path")
+          .attr("fill", function(d, i) {
+              return color(i)
+          })
+          .attr("d", arc)
+          .attr("stroke", "white")
+          .attr("stroke-width", "0.5px");
+
+}
+
+function updateDonutChart(data, svg) {}
+
+function toolTipHTML(data) {
+
+    var tip = '',
+    i   = 0;
+
+    for (var key in data.data) {
+      if (key == 'Land') {
+        tip += '<tspan x="0">' + data.data[key] + '</tspan>';
+      }
+      if (key == 'Percentage') {
+        tip += '<tspan x="0" dy="1.2em">' + Math.round(data.data[key]) + '% of global total' + '</tspan>';
+      }
+      i++;
+    }
+
+    return tip;
+};
 
 function arcTween(a) {
     const i = d3.interpolate(this._current, a);
@@ -193,6 +315,4 @@ function updatePieChart(data, country) {
         .attr("stroke", "white")
         .attr("stroke-width", "6px")
         .each(function(d) { this._current = d;  });
-}
-
 }

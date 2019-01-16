@@ -21,4 +21,10 @@ aandacht te trekken) te creëeren maar daar kwam ik nog niet helemaal uit.
 ### Day 4 (14/01/2019)
 Vandaag heb ik alle data correct ingeladen en samengevoegd, en de eerste
 data in een datamap ingeladen. De tooltip verschijnt wel opeens erg hoog,
-dus moet dat nog debuggen. 
+dus moet dat nog debuggen.
+
+### Day 5 (15/01/2019)
+Teammeeting-dag. Dus style guide gemaakt, alle data samengevoegd (dat blijkt
+natuurlijk veel makkelijker om daarna te gebruiken) en donut chart gemaakt.
+
+### Day 6 (16/01/2019)
