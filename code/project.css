@@ -13,3 +13,7 @@ This css file sets the style for the linked_views html file */
     font-weight: bold;
     color: ghostwhite;
 }
+
+#barchart {
+  background-color: powderblue;
+}

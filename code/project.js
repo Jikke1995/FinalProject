@@ -69,9 +69,9 @@ function createMap(data) {
     }
   });
 
-  console.log(dataset);
-  console.log(dataset['ABW']);
-  console.log(roundToTwo(dataset['ABW']['Plastic Waste']) / 1000000);
+  // console.log(dataset);
+  // console.log(dataset['ABW']);
+  // console.log(roundToTwo(dataset['ABW']['Plastic Waste']) / 1000000);
 
     var map = new Datamap({
       element: document.getElementById('container'),
@@ -119,7 +119,7 @@ function createMap(data) {
       done: function(datamap) {
           datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography) {
               if(data[geography.id] !== undefined){
-                console.log(data[geography.id]['Plastic Waste'])
+                var ding = prepareDataDonutInside(dataset);
                   console.log('hoi');
               }
           });
@@ -127,7 +127,7 @@ function createMap(data) {
     });
     //
     // map.legend({
-    //   defaultFillName: 'NO DATA AVAILABLE:',
+    //   defaultFillName: 'NO DATA AVAILABLE:'
     //   legendTitle: 'MAP LEGEND'});
 
 }
@@ -136,19 +136,24 @@ function roundToTwo(num) {
     return +(Math.round(num + "e+2")  + "e-2");
 }
 
+function prepareDataDonutInside(data) {
+
+  dataset_DC = []
+  datapoint = {}
+  Object.keys(data).forEach(function(d) {
+      datapoint['Land'] = data[d]['Landname'];
+      datapoint['Percentage'] = data[d]['Percentage Global Mismanaged Waste']
+      datapoint['Own Percentage'] = data[d]['Percentage Mismanaged Waste']
+      dataset_DC.push(datapoint);
+      datapoint = {};
+  });
+
+  return dataset_DC;
+}
+
 function donutChart(data) {
 
-    dataset_DC = []
-    datapoint = {}
-    Object.keys(data).forEach(function(d) {
-        datapoint['Land'] = data[d]['Landname'];
-        datapoint['Percentage'] = data[d]['Percentage Global Mismanaged Waste']
-        datapoint['Own Percentage'] = data[d]['Percentage Mismanaged Waste']
-        dataset_DC.push(datapoint);
-        datapoint = {};
-    });
-
-    console.log(dataset_DC);
+    dataset_DC = prepareDataDonutInside(data);
 
     svg_width = 800;
     svg_height = 600;
@@ -190,7 +195,7 @@ function donutChart(data) {
         .attr("stroke", "white")
         .attr("stroke-width", "0.5px");
 
-    d3v5.select('#donut').selectAll('path').call(toolTipDonut);
+    d3v5.select('#donutchart').selectAll('path').call(toolTipDonut);
 
     function toolTipDonut(selection) {
 
@@ -222,26 +227,26 @@ function donutChart(data) {
 
 }
 
-function prepareDataDonut(data) {
+function prepareDataDonutOutside(data) {
   data['Rest Percentage'] = 100 - data['Own Percentage']
-  dataset = []
+  dataset_donut = []
   datapoint = {}
   datapoint['Land'] = data['Land']
   datapoint['Waste'] = 'Mismanaged Plastic Waste'
   datapoint['%'] = data['Own Percentage'];
-  dataset.push(datapoint);
+  dataset_donut.push(datapoint);
   datapoint = {};
   datapoint['Land'] = data['Land']
   datapoint['Waste'] = 'Managed Plastic Waste'
   datapoint['%'] = data['Rest Percentage']
-  dataset.push(datapoint);
+  dataset_donut.push(datapoint);
 
-  return dataset;
+  return dataset_donut;
 }
 
 function secondLayerDonutChart(data, svg) {
 
-    dataset_DC = prepareDataDonut(data);
+    dataset_DC = prepareDataDonutOutside(data);
 
     var width = 600,
         height = 400,
@@ -284,8 +289,7 @@ function secondLayerDonutChart(data, svg) {
 
     };
 
-
-    d3v5.select('#donut').selectAll('path').call(toolTipDonut);
+    d3v5.select('#donutchart').selectAll('path').call(toolTipDonut);
 
     function toolTipDonut(selection) {
 
@@ -356,28 +360,145 @@ function createBarchart() {
 
   d3v5.json("surface-plastic-particles-by-ocean.json").then(function(data) {
 
+    console.log(data);
+
     var svg_width = 800;
     var svg_height = 600;
     var chart_width = 400;
     var chart_height = 200;
+    var padding = 2;
+
+    var colors = ['rgb(158,1,66)', 'rgb(209,59,75)', 'rgb(240,112,74)', 'rgb(252,171,99)', 'rgb(254,220,140)', 'rgb(251,248,176)', 'rgb(224,243,161)', 'rgb(170,221,162)', 'rgb(105,189,169)', 'rgb(66,136,181)', 'rgb(66,136,181)'];
 
     var oceans = [];
+    var values = [];
     Object.keys(data).forEach(function(d) {
-        console.log(d);
+        oceans.push(d);
+        values.push(data[d]['Plastic Particles'] / 1000000000);
     });
+
+    console.log(values);
+    console.log(oceans);
 
     var svg = d3v5.select("#barchart")
               .append("svg")
-              .attr("id", "SVG-barchart")
+              .attr("id", 'SVG-barchart')
               .attr("width", svg_width)
               .attr("height", svg_height)
-              .attr("transform", 'translate(' + svg_width / 2 + ',' + svg_height / 2 + ')');
+              .append('g')
+              .attr("transform", 'translate(' + (svg_width / 2 - (chart_width / 2)) + ',' + (svg_height / 2 - (chart_height / 2)) + ')');
 
     var xScale = d3v5.scaleOrdinal()
-                      .domain([])
+                      .domain(oceans)
                       .range([0, chart_width]);
 
-    console.log(data);
+    var yScale = d3v5.scaleLinear()
+                      .domain([0, 6000])
+                      .range([0, chart_height]);
+
+    var yScaleAxis = d3v5.scaleLinear()
+                          .domain([0, 6000])
+                          .range([chart_height, 0]);
+
+    var rectangles = svg.selectAll("rect")
+                        .data(values)
+                        .enter()
+                        .append("rect");
+
+    var hahatip = createToolTip(svg);
+
+    rectangles.attr("x", function(d, i) { return padding + i * (chart_width / values.length); })
+                .attr("y", function(d) { return chart_height - yScale(d); })
+                .attr("fill", function(d, i) { return colors[i] })
+                .attr("width", chart_width / values.length - padding)
+                .attr("height", function(d) { return yScale(d); })
+                .on('mouseover', function(d,i) {
+                    d3v5.select(this).attr("fill", "rgb(252,223,89)")
+                    // hahatip.style("display", null);
+                    // hahatip.select("text").text("hoi");
+                    // hahatip.attr("transform", "translate(100,10)");
+                })
+                .on('mouseout', function(d) {
+                    hahatip.style("display", "none")
+                    d3v5.select(this).attr("fill", function(d, i) {
+                      return colors[i];
+                    });
+                })
+                // .on('mousemove', function(d, i) {
+                //   tip.style("display", null);
+                //   var xPosition = d3v5.mouse(this)[0] - 100;
+                //
+                //   // Makes sure that the tooltip doesn't partly disappear
+                //   if (xPosition < 2) {
+                //       xPosition = 2;
+                //   }
+                //   if (xPosition + 260 > 500) {
+                //       xPosition = 500 - 262
+                //   }
+                //
+                //   var yPosition = d3v5.mouse(this)[1] - 70;
+                //   tip.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
+                //   tip.select("text").text("Number of particles: " + d );
+                // });
+    // Add x-axis
+    var x_axis = svg.append("g")
+                    .attr("class", "x-axis")
+                    .attr("transform", "translate(0, " + chart_height + ")")
+                    .call(d3v5.axisBottom(xScale))
+                    .selectAll("text")
+                    .attr("x", 4)
+                    .style("text-anchor", "middle");
+
+    // //Add y-axis
+    var y_axis = svg.append("g")
+                    .attr("class", "y axis")
+                    .call(d3v5.axisLeft(yScaleAxis))
+
+    // Add x-axis label
+    svg.append("text")
+        .attr("class", "x-label")
+        .attr("transform","translate(" + chart_width / 2  + "," + (chart_height + 30) + ")")
+        .style("text-achor", "middle")
+        .text("Oceans");
+
+    // Add y-axis label
+    // svg.append("text")
+    //     .attr("class", "y-label")
+    //     .attr("transform","rotate(-90)")
+    //     .attr("y", padding / 2)
+    //     .attr("x", 0 - (chart_height / 2) - padding - 70)
+    //     .style("text-achor", "middle")
+    //     .text("Litres per capita");
+
 
   })
+}
+
+function createToolTip(svg) {
+  /**
+  This function creates a Tooltip (default display: not shown) that can contain text.
+  */
+  var tip = svg.append("g")
+                .attr("class", "tooltip")
+                .style("display", "none");
+
+  // Append a rect to the tooltip
+  tip.append("rect")
+      .attr("width", 100)
+      .attr("position", "absolute")
+      .attr("height", 20)
+      .attr("fill", "white")
+      .style("opacity", 0.5);
+
+  // Append the possibility for a piece of text for the tooltip
+  tip.append("text")
+      .attr("x", 20)
+      .attr("dy", "1.2em")
+      .attr("position", "absolute")
+      .style("text-achor", "middle")
+      .attr("font-size", "12px")
+      .attr("font-weight", "bold")
+
+  return tip;
+
 }
