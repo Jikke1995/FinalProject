@@ -10,13 +10,10 @@ country.
 
 window.onload = function() {
 
-  var requests = [d3v5.json("plastic-waste-generation-total.json"), d3v5.json("inadequately-managed-plastic.json"), d3v5.json("mismanaged-waste-global-total.json")];
+  var requests = [d3v5.json('plastic-waste-generation-total.json'), d3v5.json('inadequately-managed-plastic.json'), d3v5.json('mismanaged-waste-global-total.json')];
 
   Promise.all(requests).then(function(response) {
-      data_waste = response[0];
-      data_miswaste = response[1];
-      data_global_miswaste = response[2];
-      dataset = combineData(data_waste, data_miswaste, data_global_miswaste);
+      dataset = combineData(response[0], response[1], response[2]);
       createMap(dataset);
       donutChart(dataset);
       createBarchart();
@@ -28,6 +25,10 @@ window.onload = function() {
 };
 
 function combineData(data1, data2, data3) {
+  /**
+  This function combines the datapoint of the three different datafiles in
+  an understandable and clear 'main' datafile.
+  */
 
   Object.keys(data1).forEach(function(d) {
       Object.keys(data2).forEach(function(s) {
@@ -45,12 +46,12 @@ function combineData(data1, data2, data3) {
 
 function createMap(data) {
 
-  dataset = data;
+  var dataset = data;
 
   Object.keys(dataset).forEach(function(country) {
     datapoint = roundToTwo(dataset[country]['Plastic Waste']) / 1000000
     if(datapoint < 1) {
-        dataset[country]["fillKey"] = "LOW";
+        dataset[country]["fillKey"] = 'LOW';
     }
     else if(datapoint > 1 && datapoint < 3 ) {
         dataset[country]["fillKey"] = "LOW+";
@@ -69,15 +70,9 @@ function createMap(data) {
     }
   });
 
-  // console.log(dataset);
-  // console.log(dataset['ABW']);
-  // console.log(roundToTwo(dataset['ABW']['Plastic Waste']) / 1000000);
-
     var map = new Datamap({
       element: document.getElementById('container'),
       responsive: true,
-      // height: 400,
-      // width: 900,
       fills: {
           defaultFill: "#d9f2e4",
           "LOW": "#9fdfbc",
@@ -108,7 +103,7 @@ function createMap(data) {
             if(data.fillKey) {
               return '#FC8D59';
             }
-            return "#556e52"
+            return "#d9f2e4"
           },
           highlightBorderColor: function(data) {
             if(data.fillKey) {
@@ -119,8 +114,19 @@ function createMap(data) {
       done: function(datamap) {
           datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography) {
               if(data[geography.id] !== undefined){
-                var ding = prepareDataDonutInside(dataset);
-                  console.log('hoi');
+
+                var prep_data = prepareDataDonutInside(dataset);
+
+                for(i = 0; i < prep_data.length; i ++) {
+                  if(prep_data[i]['Land'] == geography.properties.name) {
+                      set_data = prep_data[i]
+                  }
+                  if(geography.properties.name == 'United States of America' &&
+                      prep_data[i]['Land'] == 'United States') {
+                        set_data = prep_data[i]
+                  }
+                }
+                secondLayerDonutChart(set_data);
               }
           });
       }
@@ -155,24 +161,21 @@ function donutChart(data) {
 
     dataset_DC = prepareDataDonutInside(data);
 
-    svg_width = 800;
-    svg_height = 600;
-
-    var width = 600,
-        height = 400,
-        radius = Math.min(width, height) / 2;
-
+    svg_width = document.getElementById('donut').offsetWidth;
+    svg_height = 400;
+    radius = Math.min(svg_width, svg_height) / 2;
+    padding = 40;
 
     const svg = d3v5.select("#donut")
         .append('svg')
-            .attr("id", 'donutchart')
-            .attr("width", svg_width)
-            .attr("height", svg_height)
-        .append("g")
-            .attr("transform", "translate(" + svg_width / 2 + "," + svg_height / 2 + ")");
+        .attr("id", 'donutchart')
+        .attr('width', svg_width)
+        .attr('height', svg_height)
+      .append("g")
+        .attr("transform", "translate(" + svg_width / 2 + "," + svg_height / 2 + ")");
 
-    var color = d3v5.scaleOrdinal(["#66c2a5","#fc8d62","#8da0cb",
-         "#e78ac3","#a6d854","#ffd92f"]);
+    var color = d3v5.scaleOrdinal(["#66c2a5","#fc8d62","#8da0cb","#e78ac3",
+                      "#a6d854","#ffd92f"]);
 
     var pie = d3v5.pie()
                 .value(function(d) {
@@ -181,8 +184,8 @@ function donutChart(data) {
                 .sort(null);
 
     var arc = d3v5.arc()
-                .innerRadius(radius - 20)
-                .outerRadius(radius - 100);
+                .innerRadius(radius * 0.70)
+                .outerRadius(radius * 0.47);
 
     var path = svg.selectAll('path')
           .data(pie(dataset_DC));
@@ -221,7 +224,7 @@ function donutChart(data) {
         });
 
         selection.on('mousedown', function(data) {
-            secondLayerDonutChart(data.data, svg);
+            secondLayerDonutChart(data.data);
         });
     }
 
@@ -244,16 +247,17 @@ function prepareDataDonutOutside(data) {
   return dataset_donut;
 }
 
-function secondLayerDonutChart(data, svg) {
+function secondLayerDonutChart(data) {
+
+    var svg = d3v5.select('#donutchart');
 
     dataset_DC = prepareDataDonutOutside(data);
 
-    var width = 600,
-        height = 400,
-        radius = Math.min(width, height) / 2;
+    width = document.getElementById('donut').offsetWidth;
+    height = 400;
+    radius = Math.min(width, height) / 2;
 
-    var color = d3v5.scaleOrdinal(["#66c2a5","#fc8d62","#8da0cb",
-             "#e78ac3","#a6d854","#ffd92f"]);
+    var color = d3v5.scaleOrdinal(['#66c2a5','#fc8d62'])
 
     var pie = d3v5.pie()
                   .value(function(d) {
@@ -262,32 +266,25 @@ function secondLayerDonutChart(data, svg) {
                   .sort(null);
 
     var arc = d3v5.arc()
-                .innerRadius(radius - 10)
-                .outerRadius(radius + 70);
+                .innerRadius(radius * 0.72)
+                .outerRadius(radius * 0.92);
 
-    if(d3v5.select('#outerCircle').empty()) {
+    svg.append('g')
+        .attr('id', 'outerCircle')
+        .attr('transform', 'translate(' + svg_width / 2 + ',' + svg_height / 2 + ')');
 
-        svg.append('g')
-            .attr("id", "outerCircle");
+    var path = svg.select('#outerCircle').selectAll('path')
+          .data(pie(dataset_DC));
 
-        var path = svg.select('#outerCircle').selectAll('path')
-              .data(pie(dataset_DC));
-
-        path.enter().append("path")
-            .attr("fill", function(d, i) {
-                return color(i)
-            })
-            .attr("d", arc)
-            .attr("stroke", "white")
-            .attr("stroke-width", "0.5px");
-    } else {
-
-        var path = svg.select('#outerCircle').selectAll('path')
-              .data(pie(dataset_DC));
-
-        path.transition().duration(1000).attrTween("d", arcTween);
-
-    };
+    path.enter().append('path')
+        .merge(path)
+        .attr('fill', function(d, i) {
+            return color(i)
+        })
+        .attr('d', arc)
+        .attr('stroke', 'white')
+        .attr('stroke-width', '0.5px')
+        .transition().duration(1000).attrTween('d', arcTween);
 
     d3v5.select('#donutchart').selectAll('path').call(toolTipDonut);
 
@@ -296,6 +293,7 @@ function secondLayerDonutChart(data, svg) {
         selection.on('mouseenter', function(data) {
 
         svg.append('text')
+            .attr("transform", "translate(" + svg_width / 2 + "," + svg_height / 2 + ")")
             .attr('class', 'toolCircle')
             .attr('dy', 0)
             .html(toolTipTEXT(data))
@@ -303,6 +301,7 @@ function secondLayerDonutChart(data, svg) {
             .style('text-anchor', 'middle');
 
         svg.append('circle')
+            .attr("transform", "translate(" + svg_width / 2 + "," + svg_height / 2 + ")")
             .attr('class', 'toolCircle')
             .attr('r', (radius * 0.45))// radius of tooltip circle
             .style('fill', 'red') // colour based on category mouse is over
@@ -326,15 +325,15 @@ function toolTipTEXT(data) {
       if (key == 'Land') {
         tip += '<tspan x="0">' + data.data[key] + '</tspan>';
       }
-      if (key == 'Waste') {
-        tip += '<tspan x="0" dy="1.2em">' + data.data[key] + '</tspan>';
-      }
+      // if (key == 'Waste') {
+      //   tip += '<tspan x="0" dy="1.2em">' + data.data[key] + '</tspan>';
+      // }
       if (key == 'Percentage') {
         tip += '<tspan x="0" dy="1.2em">' + Math.round(data.data[key]) + '% of global total' + '</tspan>';
       }
-      if (key == '%') {
-        tip += '<tspan x="0" dy="1.2em">' + Math.round(data.data[key]) + '% of total plastic waste' + '</tspan>';
-      }
+      // if (key == '%') {
+      //   tip += '<tspan x="0" dy="1.2em">' + Math.round(data.data[key]) + '% of total plastic waste' + '</tspan>';
+      // }
       i++;
     }
 
@@ -343,13 +342,13 @@ function toolTipTEXT(data) {
 
 function arcTween(a) {
 
-  var width = 600,
+  var width = document.getElementById('donut').offsetWidth,
       height = 400,
       radius = Math.min(width, height) / 2;
 
   var arc = d3v5.arc()
-              .innerRadius(radius - 10)
-              .outerRadius(radius + 70);
+              .innerRadius(radius * 0.72)
+              .outerRadius(radius * 0.92);
 
     const i = d3v5.interpolate(this._current, a);
     this._current = i(1);
@@ -362,13 +361,16 @@ function createBarchart() {
 
     console.log(data);
 
-    var svg_width = 800;
-    var svg_height = 600;
-    var chart_width = 400;
-    var chart_height = 200;
-    var padding = 2;
+    var svg_width = document.getElementById('barchart').offsetWidth;
+    var svg_height = 400;
+    var svg_padding = 60;
 
-    var colors = ['rgb(158,1,66)', 'rgb(209,59,75)', 'rgb(240,112,74)', 'rgb(252,171,99)', 'rgb(254,220,140)', 'rgb(251,248,176)', 'rgb(224,243,161)', 'rgb(170,221,162)', 'rgb(105,189,169)', 'rgb(66,136,181)', 'rgb(66,136,181)'];
+    var chart_width = svg_width - (2 * svg_padding);
+    var chart_height = svg_height - (2 * svg_padding);
+    var padding = 5;
+
+    var colors = d3v5.scaleOrdinal(["#66c2a5","#fc8d62","#8da0cb","#e78ac3",
+                      "#a6d854","#ffd92f"]);
 
     var oceans = [];
     var values = [];
@@ -376,9 +378,6 @@ function createBarchart() {
         oceans.push(d);
         values.push(data[d]['Plastic Particles'] / 1000000000);
     });
-
-    console.log(values);
-    console.log(oceans);
 
     var svg = d3v5.select("#barchart")
               .append("svg")
@@ -390,7 +389,12 @@ function createBarchart() {
 
     var xScale = d3v5.scaleOrdinal()
                       .domain(oceans)
-                      .range([0, chart_width]);
+                      .range([0, chart_width], .1);
+
+    var xScale = d3v5.scaleBand()
+                      .range([0, chart_width])
+                      .padding(padding)
+                      .domain(oceans);
 
     var yScale = d3v5.scaleLinear()
                       .domain([0, 6000])
@@ -405,11 +409,11 @@ function createBarchart() {
                         .enter()
                         .append("rect");
 
-    var hahatip = createToolTip(svg);
+    // var hahatip = createToolTip(svg);
 
     rectangles.attr("x", function(d, i) { return padding + i * (chart_width / values.length); })
                 .attr("y", function(d) { return chart_height - yScale(d); })
-                .attr("fill", function(d, i) { return colors[i] })
+                .attr("fill", function(d, i) { return colors(i) })
                 .attr("width", chart_width / values.length - padding)
                 .attr("height", function(d) { return yScale(d); })
                 .on('mouseover', function(d,i) {
@@ -418,11 +422,12 @@ function createBarchart() {
                     // hahatip.select("text").text("hoi");
                     // hahatip.attr("transform", "translate(100,10)");
                 })
-                .on('mouseout', function(d) {
-                    hahatip.style("display", "none")
+                .on('mouseout', function(d, i) {
+                    // hahatip.style("display", "none")
                     d3v5.select(this).attr("fill", function(d, i) {
-                      return colors[i];
+                      return colors(i);
                     });
+                    console.log('hoi');
                 })
                 // .on('mousemove', function(d, i) {
                 //   tip.style("display", null);
