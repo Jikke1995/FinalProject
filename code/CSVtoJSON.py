@@ -31,14 +31,18 @@ def select_data(file):
     """
     # Read csv file
     reader = csv.DictReader(file)
-    data = {}
+    data = [];
+    datapoint = {};
     # In this case, selects the amount of global plastic production per year
     for row in reader:
-        data[row['Year']] = row['Global plastics production (million tonnes) (tonnes)']
+        datapoint['Year'] = row['Year']
+        datapoint['Plastic Production'] = row['Global plastics production (million tonnes) (tonnes)']
+        data.append(datapoint);
+        datapoint = {};
 
     return data
 
 if __name__ == "__main__":
-    csv_file = open(INPUT_CSV, 'rU')
+    csv_file = open(INPUT_CSV)
     data = select_data(csv_file)
     jsonfile = convert_into_json_file(data)
