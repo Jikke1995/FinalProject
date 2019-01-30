@@ -21,3 +21,19 @@ This css file sets the style for the linked_views html file */
   content: "";
   opacity: 0.35;
 } */
+.overlay {
+  fill: none;
+  pointer-events: all;
+}
+
+.focus circle {
+  fill: #23415a;
+  /* stroke: #6F2;
+  stroke-width: 5px; */
+}
+
+.hover-line {
+  stroke: #6F257F;
+  stroke-width: 2px;
+  stroke-dasharray: 3,3;
+}

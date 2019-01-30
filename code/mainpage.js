@@ -9,6 +9,7 @@ country.
 */
 
 window.onload = function() {
+
   var lines = timelineChart();
 
   function resize() {
@@ -32,6 +33,7 @@ function timelineChart() {
         width = 350,
         height = 350,
         parseTime = d3v5.timeParse("%Y"),
+        bisectDate = d3v5.bisector(function(d) { return d.time; }).left;
         timeValue = function(d) { return parseTime(d['Year']); },
         dataValue = function (d) { return +d['Plastic Production'] / 1000000; },
         color = "steelblue";
@@ -39,8 +41,9 @@ function timelineChart() {
     // From https://bl.ocks.org/mbostock/5649592
     function transition(path) {
         path.transition()
-            .duration(2000)
+            .duration(4000)
             .attrTween("stroke-dasharray", tweenDash);
+
     }
     function tweenDash() {
         var l = this.getTotalLength(),
@@ -50,6 +53,7 @@ function timelineChart() {
 
     function chart(selection) {
         selection.each(function (data) {
+
             data = data.map(function (d, i) {
                 return { time: timeValue(d), value: dataValue(d) };
             });
@@ -57,6 +61,7 @@ function timelineChart() {
             var x = d3v5.scaleTime()
                 .rangeRound([0, width - margin.left - margin.right])
                 .domain(d3v5.extent(data, function(d) { return d.time; }));
+
             var y = d3v5.scaleLinear()
                 .rangeRound([height - margin.top - margin.bottom, 0])
                 .domain(d3v5.extent(data, function(d) { return d.value; }));
@@ -78,6 +83,7 @@ function timelineChart() {
                 .attr("stroke-width", 4);
 
             gEnter.append("g").attr("class", "axis x");
+
             gEnter.append("g").attr("class", "axis y")
                 .append("text")
                 .attr("fill", "#000")
@@ -85,7 +91,7 @@ function timelineChart() {
                 .attr("y", 6)
                 .attr("dy", "0.71em")
                 .attr("text-anchor", "end")
-                .text("Data");
+                .text("million tonnes");
             gEnter.append("path")
                 .attr("class", "data");
 
@@ -96,7 +102,7 @@ function timelineChart() {
 
             g.select("g.axis.x")
                 .attr("transform", "translate(0," + (height - margin.bottom) + ")")
-                .call(d3v5.axisBottom(x).ticks(5))
+                .call(d3v5.axisBottom(x).ticks(10))
                 .select(".domain")
                 .remove();
 
@@ -108,6 +114,47 @@ function timelineChart() {
                 .datum(data)
                 .attr("d", line)
                 .call(transition);
+
+            var focus = g.append('g')
+                  .attr('class', 'focus')
+                  .style('display', 'none');
+
+            focus.append("circle")
+                  .attr("r", 5);
+
+            var info = d3v5.select('#line-info')
+                  .style('display', 'none');
+
+            info.append("text")
+                  .attr("x", 10)
+                  .attr('font-size', '10px')
+                  .attr("dy", ".31em");
+
+            svg.append("rect")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+                .attr("class", "overlay")
+                .attr("width", width)
+                .attr("height", height)
+                .on("mouseover", function() {
+                  focus.style("display", null);
+                  info.style('display', null);
+                })
+                .on("mouseout", function() {
+                  focus.style("display", "none");
+                  info.style('display', null);
+                })
+                .on("mousemove", mousemove);
+
+            function mousemove() {
+                var x0 = x.invert(d3v5.mouse(this)[0]),
+                    i = bisectDate(data, x0, 1),
+                    d0 = data[i - 1],
+                    d1 = data[i],
+                    d = x0 - d0.time > d1.time - x0 ? d1 : d0;
+                focus.attr("transform", "translate(" + x(d.time) + "," + y(d.value) + ")");
+                info.select("text").text(function() { return  'More or less ' + d.value + ' million tonnes of plastic was globally produced'; });
+            }
+
         });
     }
 
