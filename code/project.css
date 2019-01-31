@@ -17,10 +17,13 @@ This css file sets the style for the linked_views html file */
     max-width: 600px;
     max-height: 400px;
 }
-/* #hoi {
-  content: "";
-  opacity: 0.35;
-} */
+.datamaps-legend {
+    margin-left: 50px;
+    top: 95%;
+}
+.datamaps-legend h2 {
+    font-size: 16pt;
+}
 .overlay {
   fill: none;
   pointer-events: all;

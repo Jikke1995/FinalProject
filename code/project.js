@@ -51,22 +51,22 @@ function createMap(data) {
   Object.keys(dataset).forEach(function(country) {
     datapoint = roundToTwo(dataset[country]['Plastic Waste']) / 1000000
     if(datapoint < 1) {
-        dataset[country]["fillKey"] = 'LOW';
+        dataset[country]["fillKey"] = '< 1 million tonnes';
     }
     else if(datapoint > 1 && datapoint < 3 ) {
-        dataset[country]["fillKey"] = "LOW+";
+        dataset[country]["fillKey"] = "1 - 3 million tonnes";
     }
     else if(datapoint > 3 && datapoint < 5 ) {
-        dataset[country]["fillKey"] = "LOW++";
+        dataset[country]["fillKey"] = "3 - 5 million tonnes";
     }
     else if(datapoint > 5 && datapoint < 10) {
-        dataset[country]["fillKey"] = "LOW+++";
+        dataset[country]["fillKey"] = "5 - 10 million tonnes";
     }
     else if(datapoint > 10 && datapoint < 30) {
-      dataset[country]["fillKey"] = "LOW++++";
+      dataset[country]["fillKey"] = "10 - 30 million tonnes";
     }
     else {
-        dataset[country]["fillKey"] = "HIGH";
+        dataset[country]["fillKey"] = "> 30 million tonnes";
     }
   });
 
@@ -75,12 +75,12 @@ function createMap(data) {
       responsive: true,
       fills: {
           defaultFill: "#d9f2e4",
-          "LOW": "#9fdfbc",
-          "LOW+": "66cc94",
-          "LOW++": "3cb371",
-          "LOW+++": "267349",
-          "LOW++++": "#267349",
-          "HIGH": "194d30",
+          "< 1 million tonnes": "#9fdfbc",
+          "1 - 3 million tonnes": "#66cc94",
+          "3 - 5 million tonnes": "#3cb371",
+          "5 - 10 million tonnes": "#267349",
+          "10 - 30 million tonnes": "#267349",
+          "> 30 million tonnes": "#194d30",
       },
       data: dataset,
       geographyConfig: {
@@ -131,11 +131,11 @@ function createMap(data) {
           });
       }
     });
-    //
-    // map.legend({
-    //   defaultFillName: 'NO DATA AVAILABLE:'
-    //   legendTitle: 'MAP LEGEND'});
 
+    map.legend({
+        defaultFillName: 'No data available:',
+        legendTitle: 'Map legend',
+    })
 }
 
 function roundToTwo(num) {
@@ -160,6 +160,8 @@ function prepareDataDonutInside(data) {
 function donutChart(data) {
 
     dataset_DC = prepareDataDonutInside(data);
+
+    console.log(dataset_DC);
 
     svg_width = document.getElementById('donut').offsetWidth;
     svg_height = 400;
@@ -202,7 +204,16 @@ function donutChart(data) {
 
     function toolTipDonut(selection) {
 
+      var info = d3v5.select('#donutinfo')
+                  .style('display', 'none');
+
+      info.append('h2');
+      info.append('p');
+      info.append('legend')
+
         selection.on('mouseenter', function(data) {
+
+        info.style('display', null);
 
         svg.append('text')
             .attr('class', 'toolCircle')
@@ -225,6 +236,17 @@ function donutChart(data) {
 
         selection.on('mousedown', function(data) {
             secondLayerDonutChart(data.data);
+            info.select('h2').text(function(data) {
+              return 'Plastic waste of ' + dataset_DC[0]['Land'];
+            })
+            info.select("p").text(function(data) {
+              console.log(dataset_DC[0]['%'])
+              console.log(data)
+              return 'In 2010, ' + dataset_DC[0]['%'] + ' percent of the '
+                + 'plastic waste from ' + dataset_DC[0]['Land'] + " was "
+                + "mismanaged. This means that it was "
+                + "nor recycled, nor incinerated. "
+            });
         });
     }
 

@@ -152,7 +152,12 @@ function timelineChart() {
                     d1 = data[i],
                     d = x0 - d0.time > d1.time - x0 ? d1 : d0;
                 focus.attr("transform", "translate(" + x(d.time) + "," + y(d.value) + ")");
-                info.select("text").text(function() { return  'More or less ' + d.value + ' million tonnes of plastic was globally produced'; });
+                info.select("text").text(function() {
+                        return  'More or less ' + d.value +
+                        ' million tonnes of plastic was globally ' +
+                        'produced in the year ' + d.time.getFullYear() +
+                        '.';
+                      });
             }
 
         });
