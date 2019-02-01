@@ -20,10 +20,13 @@
     <script src="datamaps.world.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.9.1/d3-tip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.24.0/d3-legend.min.js"></script>
-    <script src='project.js'> </script>
+    <script src='linechart.js'></script>
+    <script src='recycling.js'></script>
+    <script src='project.js'></script>
+    <script src='main.js'></script>
   </head>
   <body>
-    <div class="jumbotron text-center" style="margin-bottom:0; background-image:url('ocean-Plastic.jpg')">
+    <div class="jumbotron text-center" style="margin-bottom:0; background-image:url('../doc/ocean-Plastic.jpg')">
             <p>The fight against the plastic soup</p>
     </div>
 
@@ -44,15 +47,91 @@
       </div>
     </nav>
 
-    <!-- <div class="jumbotron text-center" style="background-color:dodgerblue">
-      <h2>Plastic Waste Generation, 2010</h2>
-      <div id="maptitle" style="margin-top:10px">
-    </div> -->
+    <div class="container" style="margin-top:30px">
+      <div class="row">
+        <div class="col-sm-12">
+          <h1>Plastic pollution of the oceans </h1>
+          <hr class='d-sm-none'>
+          <h3> Worldwide plastics production </h3>
+          <p>First of all, to understand the size of the problem of plastic pollution,
+          it's necessary to realise how rapid the growth of global plastic production
+          has been over the last 65 years. When the first completely synthetic plastic
+          was produced in 1907 by Leo Baekland, it took until about 1950 before the
+          worldwide plastics production increased explosively. About that time the world
+          produced 2 million tonnes of plastic per year, but it increased nearly 200-fold to
+          381 million tonnes in 2015.
+          </p>
+          <hr class="d-sm-none">
+        </div>
+      </div>
+    </div>
+
+    <div class="container" style="margin-top:30px">
+      <div class = 'row'>
+        <div class='col-sm-8'>
+          <h3> Global plastics generation </h3>
+          <p>
+            Annual global polymer resin and fiber production
+            (plastic production), measured in metric tonnes per year.
+          <p>
+          <div id='linechart'></div>
+          <hr class="d-sm-none">
+        </div>
+        <div class='col-sm-4'>
+          <div class="jumbotron text-center" style="background:transparent !important">
+                <div id='line-info'></div>
+          </div>
+          <hr class="d-sm-none">
+        </div>
+      </div>
+    </div>
 
     <div class="container" style="margin-top:30px">
       <div class="row">
         <div class="col-sm-12">
-          <h2>Plastic waste generation (2010)</h2>
+          <p>
+            <h3> Worldwide plastic waste generation </h3>
+            Prior to 1980 the percentage of plastic that was recycled was negligible, almost 100% was discarded. Since
+            1970 rates increased on average by about 0.7% per year. That means that
+            in 2015 more or less 20% of the plastic waste was recycled. Besides the
+            25% that was incinerated, 55% of the global plastic waste was discarded.
+            Below, you can take a look at the plastics generation of the USA over the
+            same amount of years as in the image above. It shows the amount of plastic
+            that was recycled, landfilled or combusted with Energy recovery. There was
+            a lack of data to show this for the whole world, but it's some sort of
+            representative for how the global proportion rates are at this moment, and
+            how they changed over the last few years.
+          </p>
+          <hr class="d-sm-none">
+        </div>
+      </div>
+    </div>
+
+    <div class="container" style="margin-top:30px">
+      <div class="row">
+        <div class="col-sm-8">
+          <h3> Plastic facts: United States of America</h3>
+          <p>
+            Numbers of plastic generation, recycling, combusting with energy
+            recovery and landfilling, measured in thousands of tons. Clicking
+            on a barpart will give you the exact datapoint, and some information.
+          </p>
+          <div id='recycling' style='margin-top:0px;'></div>
+          <hr class="d-sm-none">
+        </div>
+        <div class="col-sm-4">
+          <div class="jumbotron text-center" style="background:transparent !important">
+            <div id='recycle-info'></div>
+          </div>
+          <hr class="d-sm-none">
+        </div>
+      </div>
+    </div>
+
+    <div class="container" style="margin-top:30px">
+      <div class="row">
+        <div class="col-sm-12">
+          <h3>Plastic waste generation (2010)</h3>
           <p> Total plastic waste generation by country, measured in tonnes per
             year. Hovering over a country will give you the plastic waste
             generation of that country. Clicking will give you the proportion
@@ -64,27 +143,32 @@
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-sm-12">
-        <div id="container" style="margin-top:0px;"></div>
-        <hr class="d-sm-none">
+    <div class="container" style="margin-top:30px">
+      <div class="row">
+        <div class="col-sm-12">
+          <div id="datamap" style="margin-top:0px;"></div>
+          <hr class="d-sm-none">
+        </div>
+      </div>
+    </div>
+
+    <div class="container" style="margin-top:0px">
+      <div class = 'row'>
+        <div class='col-sm-8'>
+          <div id='donut' style='margin-top:0px;'></div>
+          <hr class="d-sm-none">
+        </div>
+        <div class='col-sm-4'>
+          <div id='donutinfo'></div>
+        </div>
       </div>
     </div>
 
     <div class="container" style="margin-top:30px">
       <div class = 'row'>
-        <div class='col-sm-6'>
-          <div id='donut' style='margin-top:10px;'></div>
+        <div class='col-sm-8'>
+          <div id='barchart' style='margin-top:10px;'></div>
         </div>
-        <hr class="d-sm-none">
-        <div class='col-sm-6' id='donutinfo' style='margin-top:10px;'>
-        </div>
-      </div>
-    </div>
-
-    <div class = 'row'>
-      <div class='col-sm-6'>
-        <div id='barchart' style='margin-top:10px;'></div>
       </div>
     </div>
 

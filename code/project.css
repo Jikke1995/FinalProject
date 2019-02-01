@@ -18,21 +18,14 @@ This css file sets the style for the linked_views html file */
     max-height: 400px;
 }
 .datamaps-legend {
-    margin-left: 50px;
-    top: 95%;
+    top: 0%;
 }
 .datamaps-legend h2 {
-    font-size: 16pt;
+    font-size: 14pt;
 }
 .overlay {
   fill: none;
   pointer-events: all;
-}
-
-.focus circle {
-  fill: #23415a;
-  /* stroke: #6F2;
-  stroke-width: 5px; */
 }
 
 .hover-line {

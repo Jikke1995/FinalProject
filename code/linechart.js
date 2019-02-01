@@ -1,50 +1,34 @@
 /**
 Name: Jikke van den Ende
 Student number: 10787593
-This file contains the script for the linked views HTML. It creates a datamap
-of the world, which shows (for countries with available data) the alcohol
-consumption per country for the year 2015. When clicked on a country, a barchart
-is shown which shows the alcohol consumption over multiple years for that
-country.
+This file contains the function used for the linechart that shows the
+worldwide plastics production.
 */
 
-window.onload = function() {
-
-  var lines = timelineChart();
-
-  function resize() {
-      if (d3v5.select("#linechart svg").empty()) {
-            return;
-      }
-      lines.width(+d3v5.select("#linechart").style("width").replace(/(px)/g, ""))
-          .height(+d3v5.select("#linechart").style("height").replace(/(px)/g, ""));
-      d3v5.select("#linechart").call(lines);
-  }
-
-  d3v5.json("global-plastic-production.json").then(function(data) {
-      d3v5.select("#linechart").datum(data).call(lines);
-        d3v5.select(window).on('resize', resize);
-        resize();
-    });
-}
-
 function timelineChart() {
-    var margin = { top: 20, right: 20, bottom: 50, left: 50 },
+  /**
+  This main functions contains all the different function that are used for
+  creating the linechart. When the window is loaded, the linechart will move
+  gradually over the graph.
+  */
+
+    var margin = { top: 20, right: 20, bottom: 50, left: 20 },
         width = 350,
         height = 350,
         parseTime = d3v5.timeParse("%Y"),
-        bisectDate = d3v5.bisector(function(d) { return d.time; }).left;
+        getDate = d3v5.bisector(function(d) { return d.time; }).left;
         timeValue = function(d) { return parseTime(d['Year']); },
         dataValue = function (d) { return +d['Plastic Production'] / 1000000; },
-        color = "steelblue";
+        colorLine = '#66cc94';
+        colorPointer = "#267349";
 
-    // From https://bl.ocks.org/mbostock/5649592
+    // This piece of code comes from https://bl.ocks.org/mbostock/5649592
     function transition(path) {
         path.transition()
             .duration(4000)
             .attrTween("stroke-dasharray", tweenDash);
-
     }
+
     function tweenDash() {
         var l = this.getTotalLength(),
             i = d3v5.interpolateString("0," + l, l + "," + l);
@@ -58,33 +42,40 @@ function timelineChart() {
                 return { time: timeValue(d), value: dataValue(d) };
             });
 
-            var x = d3v5.scaleTime()
+            var xScale = d3v5.scaleTime()
                 .rangeRound([0, width - margin.left - margin.right])
                 .domain(d3v5.extent(data, function(d) { return d.time; }));
 
-            var y = d3v5.scaleLinear()
+            var yScale = d3v5.scaleLinear()
                 .rangeRound([height - margin.top - margin.bottom, 0])
                 .domain(d3v5.extent(data, function(d) { return d.value; }));
 
             var line = d3v5.line()
-                .x(function(d) { return x(d.time); })
-                .y(function(d) { return y(d.value); });
+                .x(function(d) { return xScale(d.time); })
+                .y(function(d) { return yScale(d.value); });
 
             var svg = d3v5.select(this).selectAll("svg").data([data]);
-            var gEnter = svg.enter().append("svg").append("g");
+            var gNext = svg.enter().append("svg").append("g");
 
-            gEnter.append("path")
+            gNext.append("path")
                 .datum(data)
                 .attr("class", "data")
                 .attr("fill", "none")
-                .attr("stroke", "steelblue")
+                .attr("stroke", colorLine)
                 .attr("stroke-linejoin", "round")
                 .attr("stroke-linecap", "round")
                 .attr("stroke-width", 4);
 
-            gEnter.append("g").attr("class", "axis x");
+            gNext.append("g").attr("class", "axis x")
+                .append('text')
+                .attr("fill", "#000")
+                .attr("transform", "translate(" + margin.left + ",15)")
+                .attr("y", 6)
+                .attr("dy", "0.71em")
+                .attr("text-anchor", "end")
+                .text('Year');
 
-            gEnter.append("g").attr("class", "axis y")
+            gNext.append("g").attr("class", "axis y")
                 .append("text")
                 .attr("fill", "#000")
                 .attr("transform", "rotate(-90)")
@@ -92,35 +83,38 @@ function timelineChart() {
                 .attr("dy", "0.71em")
                 .attr("text-anchor", "end")
                 .text("million tonnes");
-            gEnter.append("path")
+
+            gNext.append("path")
                 .attr("class", "data");
 
             var svg = selection.select("svg");
             svg.attr('width', width).attr('height', height);
+
             var g = svg.select("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
             g.select("g.axis.x")
                 .attr("transform", "translate(0," + (height - margin.bottom) + ")")
-                .call(d3v5.axisBottom(x).ticks(10))
+                .call(d3v5.axisBottom(xScale).ticks(10))
                 .select(".domain")
                 .remove();
 
             g.select("g.axis.y")
                 .attr("class", "axis y")
-                .call(d3v5.axisLeft(y));
+                .call(d3v5.axisLeft(yScale));
 
             g.select("path.data")
                 .datum(data)
                 .attr("d", line)
                 .call(transition);
 
-            var focus = g.append('g')
+            var pointer = g.append('g')
                   .attr('class', 'focus')
                   .style('display', 'none');
 
-            focus.append("circle")
-                  .attr("r", 5);
+            pointer.append("circle")
+                  .attr("r", 5)
+                  .attr('fill', colorPointer);
 
             var info = d3v5.select('#line-info')
                   .style('display', 'none');
@@ -136,28 +130,30 @@ function timelineChart() {
                 .attr("width", width)
                 .attr("height", height)
                 .on("mouseover", function() {
-                  focus.style("display", null);
+                  pointer.style("display", null);
                   info.style('display', null);
                 })
                 .on("mouseout", function() {
-                  focus.style("display", "none");
-                  info.style('display', null);
+                  pointer.style("display", "none");
+                  info.style('display', 'none');
                 })
                 .on("mousemove", mousemove);
 
             function mousemove() {
-                var x0 = x.invert(d3v5.mouse(this)[0]),
-                    i = bisectDate(data, x0, 1),
+                var x0 = xScale.invert(d3v5.mouse(this)[0]),
+                    i = getDate(data, x0, 1),
                     d0 = data[i - 1],
-                    d1 = data[i],
-                    d = x0 - d0.time > d1.time - x0 ? d1 : d0;
-                focus.attr("transform", "translate(" + x(d.time) + "," + y(d.value) + ")");
-                info.select("text").text(function() {
-                        return  'More or less ' + d.value +
-                        ' million tonnes of plastic was globally ' +
-                        'produced in the year ' + d.time.getFullYear() +
-                        '.';
-                      });
+                    d1 = data[i];
+                if (d1 != undefined) {
+                  var  d = x0 - d0.time > d1.time - x0 ? d1 : d0;
+                  pointer.attr("transform", "translate(" + xScale(d.time) + "," + yScale(d.value) + ")");
+                  info.select("text").text(function() {
+                          return  'More or less ' + d.value +
+                          ' million tonnes of plastic was globally ' +
+                          'produced in the year ' + d.time.getFullYear() +
+                          '.';
+                  });
+                }
             }
 
         });

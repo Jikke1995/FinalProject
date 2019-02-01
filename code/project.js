@@ -8,22 +8,6 @@ is shown which shows the alcohol consumption over multiple years for that
 country.
 */
 
-window.onload = function() {
-
-  var requests = [d3v5.json('plastic-waste-generation-total.json'), d3v5.json('inadequately-managed-plastic.json'), d3v5.json('mismanaged-waste-global-total.json')];
-
-  Promise.all(requests).then(function(response) {
-      dataset = combineData(response[0], response[1], response[2]);
-      createMap(dataset);
-      donutChart(dataset);
-      createBarchart();
-
-  }).catch(function(e){
-       throw(e);
-  });
-
-};
-
 function combineData(data1, data2, data3) {
   /**
   This function combines the datapoint of the three different datafiles in
@@ -70,8 +54,15 @@ function createMap(data) {
     }
   });
 
+  var info = d3v5.select('#donutinfo')
+              .style('display', 'none');
+
+  info.append('h2');
+  info.append('p');
+  info.append('legend')
+
     var map = new Datamap({
-      element: document.getElementById('container'),
+      element: document.getElementById('datamap'),
       responsive: true,
       fills: {
           defaultFill: "#d9f2e4",
@@ -126,7 +117,20 @@ function createMap(data) {
                         set_data = prep_data[i]
                   }
                 }
+
+                info.style('display', null);
                 secondLayerDonutChart(set_data);
+                info.select('h2').text(function(data) {
+                  return 'Plastic waste of ' + dataset_DC[0]['Land'];
+                })
+                info.select("p").text(function(data) {
+                  console.log(dataset_DC[0]['%'])
+                  console.log(data)
+                  return 'In 2010, ' + dataset_DC[0]['%'] + ' percent of the '
+                    + 'plastic waste from ' + dataset_DC[0]['Land'] + " was "
+                    + "mismanaged. Recyled means that it is "
+                    + "nor recycled, nor incinerated. "
+                });
               }
           });
       }
@@ -160,8 +164,6 @@ function prepareDataDonutInside(data) {
 function donutChart(data) {
 
     dataset_DC = prepareDataDonutInside(data);
-
-    console.log(dataset_DC);
 
     svg_width = document.getElementById('donut').offsetWidth;
     svg_height = 400;
@@ -240,11 +242,9 @@ function donutChart(data) {
               return 'Plastic waste of ' + dataset_DC[0]['Land'];
             })
             info.select("p").text(function(data) {
-              console.log(dataset_DC[0]['%'])
-              console.log(data)
               return 'In 2010, ' + dataset_DC[0]['%'] + ' percent of the '
                 + 'plastic waste from ' + dataset_DC[0]['Land'] + " was "
-                + "mismanaged. This means that it was "
+                + "mismanaged. Recycled means that it is "
                 + "nor recycled, nor incinerated. "
             });
         });
@@ -528,128 +528,4 @@ function createToolTip(svg) {
 
   return tip;
 
-}
-
-function createLineChart() {
-
-        // var svg_width = document.getElementById('linechart').offsetWidth,
-        //     svg_height = 400,
-        //     svg_padding = 60,
-        //     parseTime = d3v5.timeParse('%Y'),
-        //     chart_width = svg_width - (2 * svg_padding),
-        //     chart_height = svg_height - (2 * svg_padding),
-        //     timeValue = function(d) { return parseTime(d.Year) },
-        //     dataValue = function(d) { return +d['Plastic Production'] / 1000000 }
-        //     color = 'steelblue';
-        //
-        // function transition(path) {
-        //     path.transition()
-        //         .duration(2000)
-        //         .attrTween('stroke-dasharray', tweenDash);
-        // }
-        // function tweenDash() {
-        //     var l = this.getTotalLength(),
-        //         i = d3v5.interpolateString('0,' + 1, 1 + "," + 1);
-        //     return function(t) { return i(t); };
-        // }
-        //
-        // function chart(selection) {
-        //   selection.each(function (data) {
-        //       data = data.map(function (d, i) {
-        //           return { time: timeValue(d), value: dataValue(d) };
-        //       });
-        //       var x = d3v5.scaleTime()
-        //           .rangeRound([0, chart_width])
-        //           .domain(d3v5.extent(data, function(d) { return d.time; }));
-        //       var y = d3v5.scaleLinear()
-        //           .rangeRound([chart_height, 0])
-        //           .domain(d3v5.extent(data, function(d) { return d.value; }));
-        //
-        //       var line = d3v5.line()
-        //           .x(function(d) { return x(d.time); })
-        //           .y(function(d) { return y(d.value); });
-        //
-        //       var svg = d3v5.select(this).selectAll("svg").data([data]);
-        //       var gEnter = svg.enter().append("svg").append("g");
-        //
-        //       gEnter.append("path")
-        //           .datum(data)
-        //           .attr("class", "data")
-        //           .attr("fill", "none")
-        //           .attr("stroke", "steelblue")
-        //           .attr("stroke-linejoin", "round")
-        //           .attr("stroke-linecap", "round")
-        //           .attr("stroke-width", 4);
-        //
-        //       gEnter.append("g").attr("class", "axis x");
-        //       gEnter.append("g").attr("class", "axis y")
-        //           .append("text")
-        //           .attr("fill", "#000")
-        //           .attr("transform", "rotate(-90)")
-        //           .attr("y", 6)
-        //           .attr("dy", "0.71em")
-        //           .attr("text-anchor", "end")
-        //           .text("Data");
-        //       gEnter.append("path")
-        //           .attr("class", "data");
-        //
-        //       var svg = selection.select("svg");
-        //       svg.attr('width', svg_width).attr('height', svg_height);
-        //       var g = svg.select("g")
-        //           .attr("transform", 'translate(' + (svg_width / 2 - (chart_width / 2)) + ',' + (svg_height / 2 - (chart_height / 2)) + ')');
-        //
-        //       g.select("g.axis.x")
-        //           .attr("transform", "translate(0," + chart_height + ")")
-        //           .call(d3v5.axisBottom(x))
-        //           .select(".domain")
-        //           .remove();
-        //
-        //       g.select("g.axis.y")
-        //           .attr("class", "axis y")
-        //           .call(d3v5.axisLeft(y));
-        //
-        //       g.select("path.data")
-        //           .datum(data)
-        //           .attr("d", line)
-        //           .call(transition);
-        //     });
-        //   }
-        //
-        //   // chart.margin = function (_) {
-        //   //     if (!arguments.length) return margin;
-        //   //     margin = _;
-        //   //     return chart;
-        //   // };
-        //
-        //   chart.width = function (_) {
-        //       if (!arguments.length) return width;
-        //       width = _;
-        //       return chart;
-        //   };
-        //
-        //   chart.height = function (_) {
-        //       if (!arguments.length) return height;
-        //       height = _;
-        //       return chart;
-        //   };
-        //
-        //   chart.parseTime = function (_) {
-        //       if (!arguments.length) return parseTime;
-        //       parseTime = _;
-        //       return chart;
-        //   };
-        //
-        //   chart.timeValue = function (_) {
-        //       if (!arguments.length) return timeValue;
-        //       timeValue = _;
-        //       return chart;
-        //   };
-        //
-        //   chart.dataValue = function (_) {
-        //       if (!arguments.length) return dataValue;
-        //       dataValue = _;
-        //       return chart;
-        //   };
-        //
-        //   return chart;
 }
