@@ -7,6 +7,9 @@ generation that is recycled, landfilled or combusted.
 */
 
 function makeBarchart() {
+/**
+This function creates the barchart.
+*/
 
   d3v5.json("recycling-numbers.json").then(function(data) {
 
@@ -18,7 +21,9 @@ function makeBarchart() {
         colors = d3v5.scaleOrdinal(["#66c2a5","#fc8d62","#8da0cb","#e78ac3",
                              "#a6d854","#ffd92f"]);
 
-
+    // Piece of code inspired on Mike Bostock's block.
+    // It comes from https://bl.ocks.org/mbostock/b5935342c6d21928111928401e2c8608.
+    // It stacks the data into a correct format for the layerd bars.
     var stackedData = d3v5.stack()
           .keys(['Recycled', 'Combustion with Energy Recovery', 'Landfilled'])
           .offset(d3v5.stackOffsetDivergin)
@@ -38,6 +43,7 @@ function makeBarchart() {
                 .attr('width', width)
                 .attr('height', height);
 
+    // Create the information text-center which appears when a user clicks on a bar.
     var info = d3v5.select('#recycle-info')
           .style('display', 'none');
 
@@ -129,6 +135,8 @@ function makeBarchart() {
             }
           });
 
+
+    // Function for finding the minimum and maximum datapoints of the data
     function stackMin(serie) {
       return d3v5.min(serie, function(d) { return d[0]; });
     }
