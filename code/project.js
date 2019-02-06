@@ -43,6 +43,7 @@ function createMap(data) {
 
   var dataset = data;
 
+  // Creates place for information of the donutchart
   var info = d3v5.select('#donutinfo')
               .style('display', 'none');
 
@@ -50,23 +51,24 @@ function createMap(data) {
   info.append('p');
   info.append('legend')
 
+  // Create piece of text with what's measuered
   var mapinfo = d3v5.select("#mapinfo");
-
   mapinfo.append('p');
-
   mapinfo.select('p').text('Total plastic waste generation by country, measured in tonnes per year.');
 
+  // Create map
   var map = countryMap();
 
+  var colors = ["#d9f2e4", "#9fdfbc", "#66cc94", "#3cb371", "#339961", "#267349", "#194d30"]
+
+
+  // Create dropdownmenu
   var menu = d3v5.select('#dropdownmenu')
-
   var selections = ['Plastic waste whole country', 'Plastic waste per capita'];
-
   var select = d3v5.select('#dropdownmenu')
     .append('select')
         .attr('class', 'select')
         .on('change', onchange);
-
   var option = select
         .selectAll('option')
         .data(selections).enter()
@@ -76,7 +78,13 @@ function createMap(data) {
         });
 
   function onchange() {
-    selectValue = d3v5.select('select').property('value')
+    /**
+    Function for when the selected option in the dropdownmenu changes:
+    it changes the choropleth for the datamap, it changes the piece of text
+    what is measured in the datamap and the legend.
+    */
+    var selectValue = d3v5.select('select').property('value')
+
     if (selectValue === 'Plastic waste whole country') {
       for (key in map.options.data) {
           var colors = {};
@@ -101,7 +109,6 @@ function createMap(data) {
           map.updateChoropleth(colors);
       }
 
-      console.log('hoi')
       mapinfo.select('p').text('Total plastic waste generation by country, measured in tonnes per year.');
 
     }
@@ -132,6 +139,10 @@ function createMap(data) {
   }
 
   function countryMap() {
+    /**
+    This function creates the first shown datamap for the plastic waste per
+    whole country.
+    */
 
     Object.keys(dataset).forEach(function(country) {
         datapoint = roundToTwo(dataset[country]['Plastic Waste']) / 1000000
