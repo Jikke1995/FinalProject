@@ -8,7 +8,7 @@ is shown which shows the alcohol consumption over multiple years for that
 country.
 */
 
-function combineData(data1, data2, data3) {
+function combineData(data1, data2, data3, data4) {
   /**
   This function combines the datapoint of the three different datafiles in
   an understandable and clear 'main' datafile.
@@ -17,13 +17,24 @@ function combineData(data1, data2, data3) {
   Object.keys(data1).forEach(function(d) {
       Object.keys(data2).forEach(function(s) {
         Object.keys(data3).forEach(function(t) {
-          if(s === d && s === t) {
-            data1[d]['Percentage Mismanaged Waste'] = data2[s];
-            data1[d]['Percentage Global Mismanaged Waste'] = data3[t];
-          };
+          // Object.keys(data4).forEach(function(k) {
+            if(s === d && s === t) {
+              data1[d]['Percentage Mismanaged Waste'] = data2[s];
+              data1[d]['Percentage Global Mismanaged Waste'] = data3[t];
+              // data1[d]['Plastic waste per capita'] = data4[k];
+            };
+          // })
         })
-      });
+      })
   });
+
+  Object.keys(data1).forEach(function(d) {
+    Object.keys(data4).forEach(function(s) {
+      if (d === s) {
+        data1[d]['Plastic waste per capita'] = data4[s];
+      }
+    })
+  })
 
   return data1;
 }
@@ -32,28 +43,6 @@ function createMap(data) {
 
   var dataset = data;
 
-  Object.keys(dataset).forEach(function(country) {
-    datapoint = roundToTwo(dataset[country]['Plastic Waste']) / 1000000
-    if(datapoint < 1) {
-        dataset[country]["fillKey"] = '< 1 million tonnes';
-    }
-    else if(datapoint > 1 && datapoint < 3 ) {
-        dataset[country]["fillKey"] = "1 - 3 million tonnes";
-    }
-    else if(datapoint > 3 && datapoint < 5 ) {
-        dataset[country]["fillKey"] = "3 - 5 million tonnes";
-    }
-    else if(datapoint > 5 && datapoint < 10) {
-        dataset[country]["fillKey"] = "5 - 10 million tonnes";
-    }
-    else if(datapoint > 10 && datapoint < 30) {
-      dataset[country]["fillKey"] = "10 - 30 million tonnes";
-    }
-    else {
-        dataset[country]["fillKey"] = "> 30 million tonnes";
-    }
-  });
-
   var info = d3v5.select('#donutinfo')
               .style('display', 'none');
 
@@ -61,85 +50,222 @@ function createMap(data) {
   info.append('p');
   info.append('legend')
 
-    var map = new Datamap({
-      element: document.getElementById('datamap'),
-      responsive: true,
-      fills: {
-          defaultFill: "#d9f2e4",
-          "< 1 million tonnes": "#9fdfbc",
-          "1 - 3 million tonnes": "#66cc94",
-          "3 - 5 million tonnes": "#3cb371",
-          "5 - 10 million tonnes": "#267349",
-          "10 - 30 million tonnes": "#267349",
-          "> 30 million tonnes": "#194d30",
-      },
-      data: dataset,
-      geographyConfig: {
-          popupTemplate: function(geo, data) {
-            if(dataset[geo.id] !== undefined) {
-                return ['<div class="hoverinfo"><strong>',
-                      geo.properties.name,
-                      '</strong>',
-                       ': ' + (roundToTwo(data['Plastic Waste'] / 1000000)),
-                       ' million tonnes',
-                      '</div>'].join('');
-            }
-                return ['<div class="hoverinfo"><strong>',
-                      geo.properties.name,
-                      '</strong>',
-                      ': no data available',
-                      '</div>'].join('');
-          },
-          highlightFillColor: function(data) {
-            if(data.fillKey) {
-              return '#FC8D59';
-            }
-            return "#d9f2e4"
-          },
-          highlightBorderColor: function(data) {
-            if(data.fillKey) {
-              'rgba(250, 15, 160, 0.2)'
-            }
+  var mapinfo = d3v5.select("#mapinfo");
+
+  mapinfo.append('p');
+
+  mapinfo.select('p').text('Total plastic waste generation by country, measured in tonnes per year.');
+
+  var map = countryMap();
+
+  var menu = d3v5.select('#dropdownmenu')
+
+  var selections = ['Plastic waste whole country', 'Plastic waste per capita'];
+
+  var select = d3v5.select('#dropdownmenu')
+    .append('select')
+        .attr('class', 'select')
+        .on('change', onchange);
+
+  var option = select
+        .selectAll('option')
+        .data(selections).enter()
+        .append('option')
+        .text(function(d) {
+          return d;
+        });
+
+  function onchange() {
+    selectValue = d3v5.select('select').property('value')
+    if (selectValue === 'Plastic waste whole country') {
+      for (key in map.options.data) {
+          var colors = {};
+          if (map.options.data[key]['fillKey'] == '< 1 million tonnes') {
+            colors[key] = "#9fdfbc";
           }
-      },
-      done: function(datamap) {
-          datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography) {
-              if(data[geography.id] !== undefined){
-
-                var prep_data = prepareDataDonutInside(dataset);
-
-                for(i = 0; i < prep_data.length; i ++) {
-                  if(prep_data[i]['Land'] == geography.properties.name) {
-                      set_data = prep_data[i]
-                  }
-                  if(geography.properties.name == 'United States of America' &&
-                      prep_data[i]['Land'] == 'United States') {
-                        set_data = prep_data[i]
-                  }
-                }
-
-                info.style('display', null);
-                secondLayerDonutChart(set_data);
-                info.select('h2').text(function(data) {
-                  return 'Plastic waste of ' + dataset_DC[0]['Land'];
-                })
-                info.select("p").text(function(data) {
-                  console.log(dataset_DC[0]['%'])
-                  console.log(data)
-                  return 'In 2010, ' + dataset_DC[0]['%'] + ' percent of the '
-                    + 'plastic waste from ' + dataset_DC[0]['Land'] + " was "
-                    + "mismanaged. Recyled means that it is "
-                    + "nor recycled, nor incinerated. "
-                });
-              }
-          });
+          if (map.options.data[key]['fillKey'] == '1 - 3 million tonnes') {
+            colors[key] = "#66cc94";
+          }
+          if (map.options.data[key]['fillKey'] == '3 - 5 million tonnes') {
+            colors[key] = "#3cb371";
+          }
+          if (map.options.data[key]['fillKey'] == '5 - 10 million tonnes') {
+            colors[key] = "#339161";
+          }
+          if (map.options.data[key]['fillKey'] == '10 - 30 million tonnes') {
+            colors[key] = "267349";
+          }
+          if (map.options.data[key]['fillKey'] == '> 30 million tonnes') {
+            colors[key] = "#194d30";
+          }
+          map.updateChoropleth(colors);
       }
+
+      console.log('hoi')
+      mapinfo.select('p').text('Total plastic waste generation by country, measured in tonnes per year.');
+
+    }
+    if (selectValue === 'Plastic waste per capita') {
+
+      for (key in map.options.data) {
+          var colors = {};
+          if (map.options.data[key]['fillKeyCapita'] == '< 0.1 kg') {
+            colors[key] = "#9fdfbc";
+          }
+          if (map.options.data[key]['fillKeyCapita'] == '0.1 - 0.2 kg') {
+            colors[key] = "#66cc94";
+          }
+          if (map.options.data[key]['fillKeyCapita'] == '0.2 - 0.3 kg') {
+            colors[key] = "#3cb371";
+          }
+          if (map.options.data[key]['fillKeyCapita'] == '0.3 - 0.4 kg') {
+            colors[key] = "#339161";
+          }
+          if (map.options.data[key]['fillKeyCapita'] == '> 0.4 kg') {
+            colors[key] = "#267349";
+          }
+          map.updateChoropleth(colors);
+      }
+      mapinfo.select('p').text('Daily plastic waste generation per person, measured in kilograms per person per day.');
+
+    }
+  }
+
+  function countryMap() {
+
+    Object.keys(dataset).forEach(function(country) {
+        datapoint = roundToTwo(dataset[country]['Plastic Waste']) / 1000000
+        if(datapoint < 1) {
+            dataset[country]["fillKey"] = '< 1 million tonnes';
+        }
+        else if(datapoint > 1 && datapoint < 3 ) {
+            dataset[country]["fillKey"] = "1 - 3 million tonnes";
+        }
+        else if(datapoint > 3 && datapoint < 5 ) {
+            dataset[country]["fillKey"] = "3 - 5 million tonnes";
+        }
+        else if(datapoint > 5 && datapoint < 10) {
+            dataset[country]["fillKey"] = "5 - 10 million tonnes";
+        }
+        else if(datapoint > 10 && datapoint < 30) {
+          dataset[country]["fillKey"] = "10 - 30 million tonnes";
+        }
+        else {
+            dataset[country]["fillKey"] = "> 30 million tonnes";
+        }
+        datapoint = roundToTwo(dataset[country]['Plastic waste per capita'])
+        if(datapoint < 0.1) {
+            dataset[country]["fillKeyCapita"] = '< 0.1 kg';
+        }
+        else if(datapoint >= 0.1 && datapoint < 0.2 ) {
+            dataset[country]["fillKeyCapita"] = "0.1 - 0.2 kg";
+        }
+        else if(datapoint >= 0.2 && datapoint < 0.3 ) {
+            dataset[country]["fillKeyCapita"] = "0.2 - 0.3 kg";
+        }
+        else if(datapoint >= 0.3 && datapoint < 0.4) {
+            dataset[country]["fillKeyCapita"] = "0.3 - 0.4 kg";
+        } else {
+          dataset[country]["fillKeyCapita"] = "> 0.4 kg";
+        }
     });
 
-    map.legend({
-        defaultFillName: 'No data available:',
-        legendTitle: 'Map legend',
-    })
+      var map = new Datamap({
+        element: document.getElementById('datamap'),
+        responsive: true,
+        fills: {
+            defaultFill: "#d9f2e4",
+            "< 1 million tonnes": "#9fdfbc",
+            "1 - 3 million tonnes": "#66cc94",
+            "3 - 5 million tonnes": "#3cb371",
+            "5 - 10 million tonnes": "#339961",
+            "10 - 30 million tonnes": "#267349",
+            "> 30 million tonnes": "#194d30",
+        },
+        data: dataset,
+        geographyConfig: {
+            popupTemplate: function(geo, data) {
+              selectValue = d3v5.select('select').property('value');
+                if (selectValue === 'Plastic waste whole country') {
+                    if(dataset[geo.id] !== undefined) {
+                        return ['<div class="hoverinfo"><strong>',
+                              geo.properties.name,
+                              '</strong>',
+                               ': ' + (roundToTwo(data['Plastic Waste'] / 1000000)),
+                               ' million tonnes',
+                              '</div>'].join('');
+                    }
+                        return ['<div class="hoverinfo"><strong>',
+                              geo.properties.name,
+                              '</strong>',
+                              ': no data available',
+                              '</div>'].join('');
+              } else {
+                if(dataset[geo.id] !== undefined) {
+                    return ['<div class="hoverinfo"><strong>',
+                          geo.properties.name,
+                          '</strong>',
+                           ': ' + (roundToTwo(data['Plastic waste per capita'])),
+                           ' kg per person',
+                          '</div>'].join('');
+                }
+                    return ['<div class="hoverinfo"><strong>',
+                          geo.properties.name,
+                          '</strong>',
+                          ': no data available',
+                          '</div>'].join('');
+
+              }
+            },
+            highlightFillColor: function(data) {
+              if(data.fillKey) {
+                return '#FC8D59';
+              }
+              return "#d9f2e4"
+            },
+            highlightBorderColor: function(data) {
+              if(data.fillKey) {
+                'rgba(250, 15, 160, 0.2)'
+              }
+            }
+        },
+        done: function(datamap) {
+            datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography) {
+                if(data[geography.id] !== undefined){
+
+                  var prep_data = prepareDataDonutInside(dataset);
+
+                  for(i = 0; i < prep_data.length; i ++) {
+                    if(prep_data[i]['Land'] == geography.properties.name) {
+                        set_data = prep_data[i]
+                    }
+                    if(geography.properties.name == 'United States of America' &&
+                        prep_data[i]['Land'] == 'United States') {
+                          set_data = prep_data[i]
+                    }
+                  }
+
+                  info.style('display', null);
+                  secondLayerDonutChart(set_data);
+                  info.select('h2').text(function(data) {
+                    return 'Plastic waste of ' + dataset_DC[0]['Land'];
+                  })
+                  info.select("p").text(function() {
+                    return 'In 2010, ' + Math.round(set_data['Percentage'])
+                      + '% of the global plastic waste generation was produced by '
+                      + set_data['Land'] + '. From this amount of plastic waste '
+                      + dataset_DC[0]['%'] + '% was mismanaged. This means that it is '
+                      + "nor recycled, nor incinerated. It could have been dumped in "
+                      + 'rivers, oceans or non-registred dumpsites.'
+                  });
+                }
+            });
+        }
+      });
+
+      return map
+
+    }
 }
 
 function roundToTwo(num) {
@@ -226,8 +352,8 @@ function donutChart(data) {
 
         svg.append('circle')
             .attr('class', 'toolCircle')
-            .attr('r', (radius * 0.45))// radius of tooltip circle
-            .style('fill', 'red') // colour based on category mouse is over
+            .attr('r', (radius * 0.45))
+            .style('fill', 'red')
             .style('fill-opacity', 0.35);
 
         });
@@ -241,11 +367,13 @@ function donutChart(data) {
             info.select('h2').text(function(data) {
               return 'Plastic waste of ' + dataset_DC[0]['Land'];
             })
-            info.select("p").text(function(data) {
-              return 'In 2010, ' + dataset_DC[0]['%'] + ' percent of the '
-                + 'plastic waste from ' + dataset_DC[0]['Land'] + " was "
-                + "mismanaged. Recycled means that it is "
-                + "nor recycled, nor incinerated. "
+            info.select("p").text(function() {
+              return 'In 2010, ' + Math.round(data.data['Percentage'])
+                + '% of the global plastic waste generation was produced by '
+                + data.data['Land'] + '. From this amount of plastic waste '
+                + dataset_DC[0]['%'] + '% was mismanaged. This means that it is '
+                + "nor recycled, nor incinerated. It could have been dumped in "
+                + 'rivers, oceans or non-registred dumpsites.'
             });
         });
     }
@@ -381,24 +509,26 @@ function createBarchart() {
 
   d3v5.json("surface-plastic-particles-by-ocean.json").then(function(data) {
 
-    console.log(data);
-
     var svg_width = document.getElementById('barchart').offsetWidth;
     var svg_height = 400;
-    var svg_padding = 60;
+    var svg_padding = 40;
 
     var chart_width = svg_width - (2 * svg_padding);
     var chart_height = svg_height - (2 * svg_padding);
     var padding = 5;
 
-    var colors = d3v5.scaleOrdinal(["#66c2a5","#fc8d62","#8da0cb","#e78ac3",
-                      "#a6d854","#ffd92f"]);
+    var tooltip = d3v5.select("#oceansinfo").attr("class", "toolTip");
+
+    // var colors = d3v5.scaleOrdinal(["#66c2a5","#fc8d62","#8da0cb","#e78ac3",
+    //                   "#a6d854","#ffd92f"]);
+
+    var colors = d3v5.scaleOrdinal(d3v5.schemePaired);
 
     var oceans = [];
     var values = [];
     Object.keys(data).forEach(function(d) {
         oceans.push(d);
-        values.push(data[d]['Plastic Particles'] / 1000000000);
+        values.push(roundToTwo(data[d]['Plastic Particles'] / 1000000000000));
     });
 
     var svg = d3v5.select("#barchart")
@@ -415,15 +545,14 @@ function createBarchart() {
 
     var xScale = d3v5.scaleBand()
                       .range([0, chart_width])
-                      // .padding(padding)
                       .domain(oceans);
 
     var yScale = d3v5.scaleLinear()
-                      .domain([0, 6000])
+                      .domain([0, 6])
                       .range([0, chart_height]);
 
     var yScaleAxis = d3v5.scaleLinear()
-                          .domain([0, 6000])
+                          .domain([0, 6])
                           .range([chart_height, 0]);
 
     var rectangles = svg.selectAll("rect")
@@ -431,42 +560,28 @@ function createBarchart() {
                         .enter()
                         .append("rect");
 
-    // var hahatip = createToolTip(svg);
 
     rectangles.attr("x", function(d, i) { return padding + i * (chart_width / values.length); })
                 .attr("y", function(d) { return chart_height - yScale(d); })
-                .attr("fill", function(d, i) { return colors(i) })
+                .attr("fill", function(d) { return colors(d) })
                 .attr("width", chart_width / values.length - padding)
                 .attr("height", function(d) { return yScale(d); })
                 .on('mouseover', function(d,i) {
                     d3v5.select(this).attr("fill", "rgb(252,223,89)")
-                    // hahatip.style("display", null);
-                    // hahatip.select("text").text("hoi");
-                    // hahatip.attr("transform", "translate(100,10)");
+                    tooltip.attr("display", null);
                 })
-                .on('mouseout', function(d, i) {
-                    // hahatip.style("display", "none")
-                    d3v5.select(this).attr("fill", function(d, i) {
-                      return colors(i);
+                .on('mouseout', function(d) {
+                    tooltip.style("display", "none")
+                    d3v5.select(this).attr("fill", function() {
+                      return colors(d);
                     });
-                    console.log('hoi');
                 })
-                // .on('mousemove', function(d, i) {
-                //   tip.style("display", null);
-                //   var xPosition = d3v5.mouse(this)[0] - 100;
-                //
-                //   // Makes sure that the tooltip doesn't partly disappear
-                //   if (xPosition < 2) {
-                //       xPosition = 2;
-                //   }
-                //   if (xPosition + 260 > 500) {
-                //       xPosition = 500 - 262
-                //   }
-                //
-                //   var yPosition = d3v5.mouse(this)[1] - 70;
-                //   tip.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
-                //   tip.select("text").text("Number of particles: " + d );
-                // });
+                .on('mousemove', function(d) {
+                  tooltip.style("display", null)
+                          .html('Number of particles floating in this ocean: '
+                                  + d + ' billion.');
+
+                });
     // Add x-axis
     var x_axis = svg.append("g")
                     .attr("class", "x-axis")
@@ -476,7 +591,7 @@ function createBarchart() {
                     .attr("x", 4)
                     .style("text-anchor", "middle");
 
-    // //Add y-axis
+    //Add y-axis
     var y_axis = svg.append("g")
                     .attr("class", "y axis")
                     .call(d3v5.axisLeft(yScaleAxis))
@@ -507,22 +622,22 @@ function createToolTip(svg) {
   */
   var tip = svg.append("g")
                 .attr("class", "tooltip")
-                .style("display", "none");
+                .attr('display', 'none');
 
-  // Append a rect to the tooltip
-  tip.append("rect")
-      .attr("width", 100)
-      .attr("position", "absolute")
-      .attr("height", 20)
-      .attr("fill", "white")
-      .style("opacity", 0.5);
+  //Append a rect to the tooltip
+  // tip.append("rect")
+  //     .attr('position', 'absolute')
+  //     .attr("width", 100)
+  //     .attr("height", 50);
 
   // Append the possibility for a piece of text for the tooltip
-  tip.append("text")
-      .attr("x", 20)
-      .attr("dy", "1.2em")
-      .attr("position", "absolute")
-      .style("text-achor", "middle")
+  tip.append('text')
+      .attr("class", "tooltip")
+      .attr("x", 0)
+      .attr("dy", "1.3em")
+      .attr("position", "relative")
+      .style("text-anchor", "middle")
+      .style('fill', 'red')
       .attr("font-size", "12px")
       .attr("font-weight", "bold")
 

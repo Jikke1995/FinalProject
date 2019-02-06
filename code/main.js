@@ -29,10 +29,10 @@ window.onload = function() {
 
       makeBarchart();
 
-  var requests = [d3v5.json('plastic-waste-generation-total.json'), d3v5.json('inadequately-managed-plastic.json'), d3v5.json('mismanaged-waste-global-total.json')];
+  var requests = [d3v5.json('plastic-waste-generation-total.json'), d3v5.json('inadequately-managed-plastic.json'), d3v5.json('mismanaged-waste-global-total.json'), d3v5.json('plastic-waste-per-capita.json')];
 
   Promise.all(requests).then(function(response) {
-      dataset = combineData(response[0], response[1], response[2]);
+      dataset = combineData(response[0], response[1], response[2], response[3]);
       createMap(dataset);
       donutChart(dataset);
       createBarchart();
