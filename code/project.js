@@ -280,10 +280,16 @@ function createMap(data) {
 }
 
 function roundToTwo(num) {
+    /**
+    Function to round a number to two decimals.
+    */
     return +(Math.round(num + "e+2")  + "e-2");
 }
 
 function prepareDataDonutInside(data) {
+  /**
+  Function to prepare the data into a usable format for the donutchart.
+  */
 
   dataset_DC = []
   datapoint = {}
@@ -302,31 +308,30 @@ function donutChart(data) {
 
     dataset_DC = prepareDataDonutInside(data);
 
-    svg_width = document.getElementById('donut').offsetWidth;
-    svg_height = 400;
-    radius = Math.min(svg_width, svg_height) / 2;
-    padding = 40;
+    var svg_width = document.getElementById('donut').offsetWidth,
+        svg_height = 400,
+        radius = Math.min(svg_width, svg_height) / 2,
+        padding = 40,
+        color = d3v5.scaleOrdinal(["#66c2a5","#fc8d62","#8da0cb","#e78ac3",
+                          "#a6d854","#ffd92f"]);
 
     const svg = d3v5.select("#donut")
-        .append('svg')
-        .attr("id", 'donutchart')
-        .attr('width', svg_width)
-        .attr('height', svg_height)
-      .append("g")
-        .attr("transform", "translate(" + svg_width / 2 + "," + svg_height / 2 + ")");
-
-    var color = d3v5.scaleOrdinal(["#66c2a5","#fc8d62","#8da0cb","#e78ac3",
-                      "#a6d854","#ffd92f"]);
+          .append('svg')
+            .attr("id", 'donutchart')
+            .attr('width', svg_width)
+            .attr('height', svg_height)
+          .append("g")
+            .attr("transform", "translate(" + svg_width / 2 + "," + svg_height / 2 + ")");
 
     var pie = d3v5.pie()
-                .value(function(d) {
-                    return d.Percentage;
-                })
-                .sort(null);
+          .value(function(d) {
+              return d.Percentage;
+          })
+          .sort(null);
 
     var arc = d3v5.arc()
-                .innerRadius(radius * 0.70)
-                .outerRadius(radius * 0.47);
+          .innerRadius(radius * 0.70)
+          .outerRadius(radius * 0.47);
 
     var path = svg.selectAll('path')
           .data(pie(dataset_DC));
@@ -342,15 +347,21 @@ function donutChart(data) {
     d3v5.select('#donutchart').selectAll('path').call(toolTipDonut);
 
     function toolTipDonut(selection) {
+      /**
+      This function creates the tooltip and the information box for
+      the selected data (when a user clicks on a selection).
+      */
 
       var info = d3v5.select('#donutinfo')
-                  .style('display', 'none');
+            .style('display', 'none');
 
       info.append('h2');
       info.append('p');
       info.append('legend')
 
-        selection.on('mouseenter', function(data) {
+      // Display a circle in the middle with some info when the mouse
+      // enters the selection (a pieslice).
+      selection.on('mouseenter', function(data) {
 
         info.style('display', null);
 
@@ -367,13 +378,13 @@ function donutChart(data) {
             .style('fill', 'red')
             .style('fill-opacity', 0.35);
 
-        });
+      });
 
-        selection.on('mouseout', function() {
+      selection.on('mouseout', function() {
             d3v5.selectAll('.toolCircle').remove();
-        });
+      });
 
-        selection.on('mousedown', function(data) {
+      selection.on('mousedown', function(data) {
             secondLayerDonutChart(data.data);
             info.select('h2').text(function(data) {
               return 'Plastic waste of ' + dataset_DC[0]['Land'];
@@ -414,25 +425,24 @@ function secondLayerDonutChart(data) {
 
     dataset_DC = prepareDataDonutOutside(data);
 
-    width = document.getElementById('donut').offsetWidth;
-    height = 400;
-    radius = Math.min(width, height) / 2;
-
-    var color = d3v5.scaleOrdinal(['#66c2a5','#fc8d62'])
+    var width = document.getElementById('donut').offsetWidth,
+        height = 400,
+        radius = Math.min(width, height) / 2,
+        color = d3v5.scaleOrdinal(['#66c2a5','#fc8d62']);
 
     var pie = d3v5.pie()
-                  .value(function(d) {
-                      return d['%']
-                  })
-                  .sort(null);
+          .value(function(d) {
+              return d['%']
+          })
+          .sort(null);
 
     var arc = d3v5.arc()
-                .innerRadius(radius * 0.72)
-                .outerRadius(radius * 0.92);
+          .innerRadius(radius * 0.72)
+          .outerRadius(radius * 0.92);
 
     svg.append('g')
         .attr('id', 'outerCircle')
-        .attr('transform', 'translate(' + svg_width / 2 + ',' + svg_height / 2 + ')');
+        .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
 
     var path = svg.select('#outerCircle').selectAll('path')
           .data(pie(dataset_DC));
@@ -454,7 +464,7 @@ function secondLayerDonutChart(data) {
         selection.on('mouseenter', function(data) {
 
         svg.append('text')
-            .attr("transform", "translate(" + svg_width / 2 + "," + svg_height / 2 + ")")
+            .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
             .attr('class', 'toolCircle')
             .attr('dy', 0)
             .html(toolTipTEXT(data))
@@ -462,7 +472,7 @@ function secondLayerDonutChart(data) {
             .style('text-anchor', 'middle');
 
         svg.append('circle')
-            .attr("transform", "translate(" + svg_width / 2 + "," + svg_height / 2 + ")")
+            .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
             .attr('class', 'toolCircle')
             .attr('r', (radius * 0.45))// radius of tooltip circle
             .style('fill', 'red') // colour based on category mouse is over
@@ -478,6 +488,9 @@ function secondLayerDonutChart(data) {
 }
 
 function toolTipTEXT(data) {
+  /**
+  This function creates the string that's being showed inside the tooltip.
+  */
 
     var tip = '',
     i   = 0;
@@ -486,15 +499,9 @@ function toolTipTEXT(data) {
       if (key == 'Land') {
         tip += '<tspan x="0">' + data.data[key] + '</tspan>';
       }
-      // if (key == 'Waste') {
-      //   tip += '<tspan x="0" dy="1.2em">' + data.data[key] + '</tspan>';
-      // }
       if (key == 'Percentage') {
         tip += '<tspan x="0" dy="1.2em">' + Math.round(data.data[key]) + '% of global total' + '</tspan>';
       }
-      // if (key == '%') {
-      //   tip += '<tspan x="0" dy="1.2em">' + Math.round(data.data[key]) + '% of total plastic waste' + '</tspan>';
-      // }
       i++;
     }
 
@@ -502,6 +509,9 @@ function toolTipTEXT(data) {
 };
 
 function arcTween(a) {
+  /**
+  This function returns the arc that's needed to create the piechart.
+  */
 
   var width = document.getElementById('donut').offsetWidth,
       height = 400,
