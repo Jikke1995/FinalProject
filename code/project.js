@@ -64,103 +64,22 @@ function createMap(data) {
   // Create map
   var map = countryMap();
 
-  var legend = d3.select('#datamapLegend')
+  var legend = d3v5.select('#datamapLegend')
          .append('ul')
          .attr('class', 'list-inline');
 
   var keys = legend.selectAll('li.key')
-         .data(color.range());
+         .data(colors);
 
-  var legend_items = ["< 1 million tonnes", "1 - 3 million tonnes", "3 - 5 million tonnes", "5 - 10 million tonnes", "10 - 30 million tonnes", "> 30 million tonnes"];
+  var legend_items = ["No data", "< 1", "1 - 3", "3 - 5", "5 - 10", "10 - 30", "> 30"];
 
   keys.enter().append('li')
          .attr('class', 'key')
          .style('border-top-color', String)
          .text(function (d, i) {
              return legend_items[i];
-         });
-
-  // map.legend({
-  //   legendTitle: 'Legend',
-  //   defaultFillName: 'No data'
-  // })
-
-  // var wLegend = 300,
-  //     hLegend = 50;
-  //
-  // var key = d3v5.select('#datamapLegend')
-  //       .append('svg')
-  //       .attr('width', wLegend)
-  //       .attr('height', hLegend);
-  //
-  // var legend = key.append('defs')
-  //       .append('svg:linearGradient')
-  //       .attr('id', 'gradient')
-  //       .attr('x1', '0%')
-  //       .attr("y1", "100%")
-  //       .attr("x2", "100%")
-  //       .attr("y2", "100%")
-  //       .attr("spreadMethod", "pad");
-  //
-  // legend.append('stop')
-  //   .attr('offset', '0%')
-  //   .attr('stop-color', colors[0])
-  //   .attr('stop-opacity', 1);
-  //
-  // legend.append("stop")
-  //   .attr("offset", "17%")
-  //   .attr("stop-color", colors[1])
-  //   .attr("stop-opacity", 1);
-  //
-  // legend.append("stop")
-  //   .attr("offset", "33%")
-  //   .attr("stop-color", colors[2])
-  //   .attr("stop-opacity", 1);
-  //
-  // legend.append("stop")
-  //   .attr("offset", "50%")
-  //   .attr("stop-color", colors[3])
-  //   .attr("stop-opacity", 1);
-  //
-  // legend.append("stop")
-  //   .attr("offset", "67%")
-  //   .attr("stop-color", colors[4])
-  //   .attr("stop-opacity", 1);
-  //
-  // legend.append("stop")
-  //   .attr("offset", "83%")
-  //   .attr("stop-color", colors[5])
-  //   .attr("stop-opacity", 1);
-  //
-  // legend.append("stop")
-  //     .attr("offset", "100")
-  //     .attr("stop-color", colors[6])
-  //     .attr("stop-opacity", 1);
-  //
-  // key.append("rect")
-  //     .attr("width", wLegend)
-  //     .attr("height", hLegend - 30)
-  //     .style("fill", "url(#gradient)")
-  //     .attr("transform", "translate(10,10)");
-  //
-  // var y = d3v5.scaleLinear()
-  //           .range([310, 10])
-  //           .domain([30, 0]);
-  //
-  // var yAxis = d3v5.axisBottom()
-  //           .scale(y)
-  //           .ticks(8);
-  //
-  // key.append("g")
-  //     .attr("class", "y axis")
-  //     .attr("transform", "translate(0,30)")
-  //     .call(yAxis)
-  //     .append("text")
-  //     .attr("transform", "rotate(-90)")
-  //     .attr("y", 0)
-  //     .attr("dy", ".71em")
-  //     .style("text-anchor", "end")
-  //     .text("axis title");
+         })
+         .style('text-anchor', 'middle');
 
   // Create dropdownmenu
   var menu = d3v5.select('#dropdownmenu')
