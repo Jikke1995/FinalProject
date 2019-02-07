@@ -1,18 +1,22 @@
 /**
 Name: Jikke van den Ende
 Student number: 10787593
-This file contains the script for the linked views HTML. It creates a datamap
-of the world, which shows (for countries with available data) the alcohol
-consumption per country for the year 2015. When clicked on a country, a barchart
-is shown which shows the alcohol consumption over multiple years for that
-country.
+This is the main file that only has the function for when the window
 */
 
 window.onload = function() {
+  /**
+  This function is the main for when the page is loaded. It calls all the functions
+  from other scripts to make it more clear where every visualisation part comes from.
+  */
 
+    // This part is for making the linechart.
     var lines = timelineChart();
 
     function resize() {
+      /**
+      This function makes sure the linechart resizes together with the window.
+      */
         if (d3v5.select("#linechart svg").empty()) {
               return;
         }
@@ -27,17 +31,20 @@ window.onload = function() {
           resize();
       });
 
-      makeBarchart();
+    // Making the barchart about the USA.
+    makeBarchart();
 
-  var requests = [d3v5.json('plastic-waste-generation-total.json'), d3v5.json('inadequately-managed-plastic.json'), d3v5.json('mismanaged-waste-global-total.json'), d3v5.json('plastic-waste-per-capita.json')];
+    // This part below is for making the datamap, the donutchart and the last barchart. 
+    var requests = [d3v5.json('plastic-waste-generation-total.json'), d3v5.json('inadequately-managed-plastic.json'), d3v5.json('mismanaged-waste-global-total.json'), d3v5.json('plastic-waste-per-capita.json')];
 
-  Promise.all(requests).then(function(response) {
-      dataset = combineData(response[0], response[1], response[2], response[3]);
-      createMap(dataset);
-      donutChart(dataset);
-      createBarchart();
+    Promise.all(requests).then(function(response) {
+        dataset = combineData(response[0], response[1], response[2], response[3]);
+        createMap(dataset);
+        donutChart(dataset);
+        createBarchart();
 
-  }).catch(function(e){
-       throw(e);
-  });
+    }).catch(function(e){
+         throw(e);
+    });
+
 };

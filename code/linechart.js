@@ -22,7 +22,8 @@ function timelineChart() {
         colorLine = '#66cc94';
         colorPointer = "#267349";
 
-    // This piece of code comes from https://bl.ocks.org/mbostock/5649592
+    // These pieces of code comes from https://bl.ocks.org/mbostock/5649592.
+    // They are used for the transition of the line when the page is loaded.
     function transition(path) {
         path.transition()
             .duration(4000)
@@ -36,6 +37,10 @@ function timelineChart() {
     }
 
     function chart(selection) {
+      /**
+      This function creates the linechart. Most of the function is based
+      on what M Bostock did on https://bl.ocks.org/mbostock/5649592.
+      */
         selection.each(function (data) {
 
             data = data.map(function (d, i) {
@@ -93,21 +98,25 @@ function timelineChart() {
             var g = svg.select("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+            // create x-axis
             g.select("g.axis.x")
                 .attr("transform", "translate(0," + (height - margin.bottom) + ")")
                 .call(d3v5.axisBottom(xScale).ticks(10))
                 .select(".domain")
                 .remove();
 
+            // create y-axis
             g.select("g.axis.y")
                 .attr("class", "axis y")
                 .call(d3v5.axisLeft(yScale));
 
+            // create line and use transition
             g.select("path.data")
                 .datum(data)
                 .attr("d", line)
                 .call(transition);
 
+            // Creating the circle on the line when hovering the path.
             var pointer = g.append('g')
                   .attr('class', 'focus')
                   .style('display', 'none');
@@ -116,6 +125,7 @@ function timelineChart() {
                   .attr("r", 5)
                   .attr('fill', colorPointer);
 
+            // Creating the information box when hovering the path.
             var info = d3v5.select('#line-info')
                   .style('display', 'none');
 
@@ -124,6 +134,8 @@ function timelineChart() {
                   .attr('font-size', '10px')
                   .attr("dy", ".31em");
 
+            // Create invisible rect over the whole path which picks up
+            // mousemovements all over the path (not just on the line).
             svg.append("rect")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
                 .attr("class", "overlay")
@@ -140,6 +152,11 @@ function timelineChart() {
                 .on("mousemove", mousemove);
 
             function mousemove() {
+              /**
+              This function calculates the correct x and y coordinates of the
+              pointer circle on the line while hovering, and adds the
+              data information to the information box next to the graph.
+              */
                 var x0 = xScale.invert(d3v5.mouse(this)[0]),
                     i = getDate(data, x0, 1),
                     d0 = data[i - 1],
@@ -159,6 +176,7 @@ function timelineChart() {
         });
     }
 
+    // Piece of code from https://bl.ocks.org/mbostock/5649592.
     chart.margin = function (_) {
         if (!arguments.length) return margin;
         margin = _;
