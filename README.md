@@ -7,13 +7,13 @@ Student number: 10787593
 Application goals: Inform people in general about world wide plastic pollution
 of the oceans, and create awareness of the size of this problem.
 
-### Purpose project
+## Purpose project
 Even though worldwide plastic pollution is a well-known problem, every year more than eight million tonnes of plastic is being dumped in the ocean. The problem is the rapid growth in plastic production in combination with a not so rapid growth in different ways of managing the plastic waste, like recycling. By illustrating these outrageous numbers of plastic production, waste generation and pollution of the oceans, the aim of this project is to help people realise the magnitude of the problem and hopefully do something about it themselves.
 
-### Copyright statement
-This is a public domain release. The code in this repository can be used by everyone, without any restrictions. See the license for further information.
+## Copyright statement
+This is a public domain release. The code in this repository can be used by everyone, without any restrictions. See the [license](LICENSE) for further information.
 
-### Acknowledge sources
+## Acknowledge sources
 The materials I used for my repository I haven't made by myself all have their
 own respective licenses. I checked them to see if I could use them.  
 External code:  
