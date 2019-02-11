@@ -15,11 +15,11 @@ This is a public domain release. The code in this repository can be used by ever
 
 ### Acknowledge sources
 The materials I used for my repository I haven't made by myself all have their
-own respective licenses. I checked them to see if I could use them.
-External code:
-For creating the datamap I inspired a lot of my code on a project by [Mark diMarco](http://datamaps.github.io/).
-Images:
-The plastic in sea image comes from [Waking Times](https://www.wakingtimes.com/2018/03/21/the-amount-of-plastic-in-oceans-will-triple-within-seven-years-says-major-report/).
+own respective licenses. I checked them to see if I could use them.  
+External code:  
+For creating the datamap I inspired a lot of my code on a project by [Mark diMarco](http://datamaps.github.io/).  
+Images:  
+The plastic in sea image comes from [Waking Times](https://www.wakingtimes.com/2018/03/21/the-amount-of-plastic-in-oceans-will-triple-within-seven-years-says-major-report/).  
 The turtle image comes from [WNF rangers](https://rangers.wnf.nl/info/7-tips-om-minder-plastic-te-gebruiken.htm).
 
 Data: most of the datafiles I got from the article of [Our World in Data](https://ourworldindata.org/plastic-pollution).
