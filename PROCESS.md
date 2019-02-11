@@ -1,3 +1,8 @@
+<!-- Naam: Jikke van den ende
+Studentnummer: 10787593
+Dit processbook is een soort dagboek van wat ik elke dag heb gedaan aan het
+project.  -->
+
 # Process book
 
 LET OP: dit heb ik in het Nederlands geschreven.
@@ -19,7 +24,7 @@ verhoudingen etc. zodat het netjes op de pagina staat).
 ### Dag 3 (11/01/2019)
 Vandaag ben ik niet erg productief geweest. Heb uiteindelijk alleen
 gekeken hoe ik een animatie-lijngrafiek als eerste visualisatie (om de
-aandacht te trekken) te creëeren maar daar kwam ik nog niet helemaal uit.
+aandacht te trekken) te creëeren maar daar kwam ik absoluut nog niet uit.
 
 ### Dag 4 (14/01/2019)
 Vandaag heb ik alle data correct ingeladen en samengevoegd, en de eerste
@@ -27,39 +32,42 @@ data in een datamap ingeladen. De tooltip verschijnt wel opeens erg hoog,
 dus moet dat nog debuggen.
 
 ### Dag 5 (15/01/2019)
-Teammeeting-dag. Dus style guide gemaakt, alle data samengevoegd (dat blijkt
-natuurlijk veel makkelijker om daarna te gebruiken) en de binnenste
-donut chart gemaakt.
+Teammeeting-dag. Dus style guide gemaakt, alle data samengevoegd (in plaats van
+losse files gebruiken) en een begin aan de  binnenste donut chart gemaakt.
 
 ### Dag 6 (16/01/2019)
+Tooltip gecorrigeerd in datamap, evenals het choropleth mooi laten verlopen.
+Een legenda toegevoegd. Ook verder bezig geweest met de binnenste donutchart en
+er een tooltip in het midden aan toegevoegd.
 
 ### Dag 7 (17/01/2019)
-Donutchart gemaakt voor het percentage plastic waste per land,
-ten opzichte van de globale plastic waste.
+M'n code nagelopen aan de hand van de eigengemaakte styleguide, en de tweede
+laag van de donutchart gecreëerd.
 
 ### Dag 8 (18/01/2019)
-Verdergegaan met de donutchart, gezorgd dat hij een tooltip heeft die verschijnt
-bij het hooveren.
+Geprobeerd een transitie toe te voegen aan de tweede laag van de donutchart,
+maar kwam hier maar niet uit. M'n vraag heeft de wachtrij nummer 1 plek nooit
+gehaald..
 
 ### Dag 9 (21/01/2019)
-Data ingeladen over het plastic in de oceanen. Een barchart aangemaakt,
-en een begin gemaakt met het aanmaken van van de piechart die aangeeft
-welke verschillende deeltjes drijven in de zeeën.
+Data ingeladen over het plastic in de oceanen en een barchart gemaakt voor de
+massa aan plastic deeltjes per oceaan. Tooltip geprobeerd te maken maar dit
+lukte maar niet.
 
 ### Dag 10 (22/01/2019)
--
+ALLES WAT IK DEZE DAG HEB GEDAAN IS VERDWENEN.
 
 ### Dag 11 (23/01/2019)
--
+ALLES WAT IK DEZE DAG HEB GEDAAN IS VERDWENEN.
 
 ### Dag 12 (24/01/2019)
--
+ALLES WAT IK DEZE DAG HEB GEDAAN IS VERDWENEN.
 Teammeeting gehad op deze dag, tips gekregen over repository.
 
 ### Dag 13 (25/01/2019)
 Vandaag de dag dat ik van mijn fiets viel. Laptop kapot, dus hele dag niks
 gedaan ivm MediaMarkt bezoek. Wel bij het mentorgesprek geweest en meegekeken
-met de anderen.
+met de anderen (updatefunctie eindelijk uitgelegd gekregen).
 
 ### Dag 14 (28/01/2019)
 Alle programma's opnieuw geïnstalleerd op mijn nieuwe laptop, en opnieuw
@@ -70,13 +78,40 @@ piechart die aangeeft wat de verhouding van verschillende plastic deeltjes is
 voor de verschillende oceanen. Ik heb deze dagen dus leeg gelaten, want
 dat was niet gepusht.........
 
-### Day (29/01/2019)
-De barchart opnieuw aangemaakt, en de transitie voor de tweede laag van de
-piechart weer correct laten verlopen.
+### Dag 15 (29/01/2019)
+De barchart opnieuw afgemaakt, en de transitie voor de tweede laag van de
+piechart weer gemaakt.
 
-### Day (30/01/2019)
+### Dag 16 (30/01/2019)
 De lijngrafiek gemaakt voor op de homepage, inclusief informatie en transitie.
 
-### Day (31/01/2019)
-Legenda voor de datamap gecreëerd, websitedesign mooier gemaakt. Ook heb ik dit
-processbook weer afgeschreven, en ben begonnen met de README.md
+### Dag 17 (31/01/2019)
+Websitedesign mooier gemaakt, helemaal gekeken waar ik alles wil hebben en hoe
+ik het lopende verhaal tussen de visualisaties kan vertellen.
+
+### Dag 18 (01/02/2019)
+Dropdownmenu voor de datamaps proberen te maken. Is nog niet helemaal gelukt,
+eerst nu nieuwe datamaps gemaakt, maar ik moet hem nog 'vervangen' in plaats
+van eronder opnieuw aanmaken.
+
+### Dag 19 (04/02/2019)
+Datamap gedeelte helemaal afgemaakt, dropdownmenu gemaakt, legenda aangepast,
+alles update nu mooi met nieuwe data mee.
+
+### Dag 20 (05/02/2019)
+Vandaag moest ik de hele dag werken, dus niks aan gedaan.
+
+### Dag 21 (06/02/2019)
+Gezorgd dat het eindelijk helemaal correct verloopt dat als je op de landen
+klikt de tweede laag van de donutchart ook veranderd.
+
+### Dag 22 (07/02/2019)
+Vandaag moest ik weer de hele dag werken, dus niks aan gedaan. S'ochtens alleen
+alle code afgemaakt zodat dat af is.
+
+### Dag 23 (08/02/2019)
+Once again, moest ik werken.
+
+### Dag 24 (11/02/2019)
+Read.me aangepast, filmpje gemaakt en report geschreven. EINDELIJK
+INGELEVERD!!!!!!
