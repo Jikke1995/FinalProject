@@ -366,6 +366,9 @@ function prepareDataDonutInside(data) {
 }
 
 function donutChart(data) {
+  /**
+  This functions makes the inside layer of the donutchart.
+  */
 
     dataset_DC = prepareDataDonutInside(data);
 
@@ -588,18 +591,22 @@ function arcTween(a) {
 }
 
 function createBarchart() {
+  /**
+  This function creates the last barchart that shows the total mass of plastic
+  particles in different oceans.
+  */
 
-  d3v5.json("surface-plastic-particles-by-ocean.json").then(function(data) {
+  d3v5.json('surface-plastic-particles-by-ocean.json').then(function(data) {
 
-    var svg_width = document.getElementById('barchart').offsetWidth;
-    var svg_height = 400;
-    var svg_padding = 40;
+    var svg_width = document.getElementById('barchart').offsetWidth,
+        svg_height = 400,
+        svg_padding = 40;
 
     var chart_width = svg_width - (2 * svg_padding);
     var chart_height = svg_height - (2 * svg_padding);
     var padding = 5;
 
-    var tooltip = d3v5.select("#oceansinfo").attr("class", "toolTip");
+    var tooltip = d3v5.select('#oceansinfo').attr('class', 'toolTip');
 
     var colors = d3v5.scaleOrdinal(d3v5.schemePaired);
 
@@ -610,13 +617,13 @@ function createBarchart() {
         values.push(roundToTwo(data[d]['Plastic Particles'] / 1000000000000));
     });
 
-    var svg = d3v5.select("#barchart")
-              .append("svg")
-              .attr("id", 'SVG-barchart')
-              .attr("width", svg_width)
-              .attr("height", svg_height)
+    var svg = d3v5.select('#barchart')
+              .append('svg')
+              .attr('id', 'SVG-barchart')
+              .attr('width', svg_width)
+              .attr('height', svg_height)
               .append('g')
-              .attr("transform", 'translate(' + (svg_width / 2 - (chart_width / 2)) + ',' + (svg_height / 2 - (chart_height / 2)) + ')');
+              .attr('transform', 'translate(' + (svg_width / 2 - (chart_width / 2)) + ',' + (svg_height / 2 - (chart_height / 2)) + ')');
 
     var xScale = d3v5.scaleOrdinal()
                       .domain(oceans)
@@ -639,7 +646,7 @@ function createBarchart() {
                         .enter()
                         .append("rect");
 
-
+    // Add the bars, sensible for mouse events.
     rectangles.attr("x", function(d, i) { return padding + i * (chart_width / values.length); })
                 .attr("y", function(d) { return chart_height - yScale(d); })
                 .attr("fill", function(d) { return colors(d) })
@@ -683,33 +690,4 @@ function createBarchart() {
         .text("Oceans");
 
   });
-}
-
-function createToolTip(svg) {
-  /**
-  This function creates a Tooltip (default display: not shown) that can contain text.
-  */
-  var tip = svg.append("g")
-                .attr("class", "tooltip")
-                .attr('display', 'none');
-
-  //Append a rect to the tooltip
-  // tip.append("rect")
-  //     .attr('position', 'absolute')
-  //     .attr("width", 100)
-  //     .attr("height", 50);
-
-  // Append the possibility for a piece of text for the tooltip
-  tip.append('text')
-      .attr("class", "tooltip")
-      .attr("x", 0)
-      .attr("dy", "1.3em")
-      .attr("position", "relative")
-      .style("text-anchor", "middle")
-      .style('fill', 'red')
-      .attr("font-size", "12px")
-      .attr("font-weight", "bold")
-
-  return tip;
-
 }
