@@ -12,18 +12,30 @@ The screenshot below shows a map of the world. While hovering over a country (Ch
 
 ## Technical Design  
 
-Overview:  
+There consist five different visualisations in this project. Three of the five have their own JavaScript file, and two share one JavaScript file. This means that my main file relies on four different scripts.
+
 
 main.js:  
+This is the main script that loads when the visualisations webpage is loaded.
 
-linechart.js:
+It uses the Promise.all() function for loading in the four different .json files
+and then combineData() to create one main datafile for the section with the datamap and piechart. After this it calls the function createMap() and donutChart() for these two visualisations. 
+
+linechart.js:  
+This file is used to create the single-line chart that shows the world wide plastics production from 1950 until 2015. It contains one main function (timelineChart) which returns the function for the line to the main file. In the mainfile I load in the data for the plastics production and call this function for the data with a resizing component so that is adapts to the size of the window.  
+For the transition of the line I used two different functions, transition() and tweenDash(). By interpolating the stroke-dasharray style property, you can animate a stroke from start to end.
 
 recycling.js:  
+This file is used for creating the first barchart that shows the plastics generation for the USA from 1960 until 2015, and how much of this generation gets recycled, landfilled or combusted into Energy Recovery. It's main function is makeBarChart which (obviously) creates the barchart. It uses two extra functions for finding the minimum and maximum value in a stack.
 
-project.js: 
+project.js:
+
+oceanchart.js:  
 
 
 
 ## Challenges during the process  
 
+
 ## Defend of decisions
+The resize function I used for the linechart is based on a project of Mike Bostock. I tried using it for other charts, to have a smooth resizing for them as well, but that seemed really harder than I thought. In the end I thought it wasn't the most important thing to focus on, but for a more smooth resize of the window (and so the visualisations) it would have been nicer if I accomplished that for the other visualisations as well.

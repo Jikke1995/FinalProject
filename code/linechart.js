@@ -175,7 +175,7 @@ function timelineChart() {
         });
     }
 
-    // Piece of code from https://bl.ocks.org/mbostock/5649592.
+
     chart.margin = function (_) {
         if (!arguments.length) return margin;
         margin = _;
