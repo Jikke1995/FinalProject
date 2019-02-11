@@ -34,17 +34,19 @@ window.onload = function() {
     // Making the barchart about the USA.
     makeBarchart();
 
-    // This part below is for making the datamap, the donutchart and the last barchart. 
+    // This part below is for making the datamap, the donutchart and the last barchart.
     var requests = [d3v5.json('plastic-waste-generation-total.json'), d3v5.json('inadequately-managed-plastic.json'), d3v5.json('mismanaged-waste-global-total.json'), d3v5.json('plastic-waste-per-capita.json')];
 
     Promise.all(requests).then(function(response) {
         dataset = combineData(response[0], response[1], response[2], response[3]);
         createMap(dataset);
         donutChart(dataset);
-        createBarchart();
 
     }).catch(function(e){
          throw(e);
     });
+
+    // Making the barchart about the oceans.
+    oceanChart();
 
 };
