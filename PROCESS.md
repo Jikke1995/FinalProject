@@ -51,7 +51,7 @@ gehaald..
 
 ### Dag 9 (21/01/2019)
 Data ingeladen over het plastic in de oceanen en een barchart gemaakt voor de
-massa aan plastic deeltjes per oceaan. Tooltip geprobeerd te maken maar dit
+hoeveelheid aan plastic deeltjes per oceaan. Tooltip geprobeerd te maken maar dit
 lukte maar niet.
 
 ### Dag 10 (22/01/2019)
