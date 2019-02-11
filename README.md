@@ -18,6 +18,10 @@ Screenshots of the visualisations:
 
 ![alt text](/doc/datamap.png)  
 
+![alt text](/doc/donutchart.png)  
+
+![alt text](/doc/barchart2.png)  
+  
 
 ## Copyright statement
 This is a public domain release. The code in this repository can be used by everyone, without any restrictions. See the [license](LICENSE) for further information.
