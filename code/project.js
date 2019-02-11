@@ -64,12 +64,6 @@ function createMap(data) {
   // Create map
   var map = countryMap();
 
-  legendDatasetCountry();
-
-  function legendDatasetCountry() {
-    /**
-    This function creates the legend for the  first shown datamap.
-    */
     var legend = d3v5.select('#datamapLegend')
            .append('ul')
            .attr('class', 'list-inline');
@@ -86,7 +80,6 @@ function createMap(data) {
                return legend_items[i];
            })
            .style('text-anchor', 'middle');
-  }
 
   // Create dropdownmenu
   var menu = d3v5.select('#dropdownmenu')
@@ -140,7 +133,22 @@ function createMap(data) {
 
       // Delete old legend and create legend for this datamap.
       d3v5.select('#datamapLegend > *').remove();
-      legendDatasetCountry();
+      var legend = d3v5.select('#datamapLegend')
+             .append('ul')
+             .attr('class', 'list-inline');
+
+      var keys = legend.selectAll('li.key')
+             .data(colors1);
+
+      var legend_items = ["No data", "< 1", "1 - 3", "3 - 5", "5 - 10", "10 - 30", "> 30"];
+
+      keys.enter().append('li')
+             .attr('class', 'key')
+             .style('border-top-color', String)
+             .text(function (d, i) {
+                 return legend_items[i];
+             })
+             .style('text-anchor', 'middle');
 
     }
     if (selectValue === 'Plastic waste per capita') {
