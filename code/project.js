@@ -58,28 +58,35 @@ function createMap(data) {
   mapinfo.select('p').text('Total plastic waste generation by country, measured in tonnes per year.');
 
   // Store used colors for choropleth.
-  var colors = ["#d9f2e4", "#9fdfbc", "#66cc94", "#3cb371", "#339961", "#267349", "#194d30"]
-  var color = d3v5.scaleOrdinal(colors)
+  var colors1 = ["#d9f2e4", "#9fdfbc", "#66cc94", "#3cb371", "#339961", "#267349", "#194d30"]
+  var colors2 = ["#d9f2e4", "#9fdfbc", "#66cc94", "#3cb371", "#339961", "#267349"]
 
   // Create map
   var map = countryMap();
 
-  var legend = d3v5.select('#datamapLegend')
-         .append('ul')
-         .attr('class', 'list-inline');
+  legendDatasetCountry();
 
-  var keys = legend.selectAll('li.key')
-         .data(colors);
+  function legendDatasetCountry() {
+    /**
+    This function creates the legend for the  first shown datamap.
+    */
+    var legend = d3v5.select('#datamapLegend')
+           .append('ul')
+           .attr('class', 'list-inline');
 
-  var legend_items = ["No data", "< 1", "1 - 3", "3 - 5", "5 - 10", "10 - 30", "> 30"];
+    var keys = legend.selectAll('li.key')
+           .data(colors1);
 
-  keys.enter().append('li')
-         .attr('class', 'key')
-         .style('border-top-color', String)
-         .text(function (d, i) {
-             return legend_items[i];
-         })
-         .style('text-anchor', 'middle');
+    var legend_items = ["No data", "< 1", "1 - 3", "3 - 5", "5 - 10", "10 - 30", "> 30"];
+
+    keys.enter().append('li')
+           .attr('class', 'key')
+           .style('border-top-color', String)
+           .text(function (d, i) {
+               return legend_items[i];
+           })
+           .style('text-anchor', 'middle');
+  }
 
   // Create dropdownmenu
   var menu = d3v5.select('#dropdownmenu')
@@ -128,8 +135,12 @@ function createMap(data) {
           map.updateChoropleth(colors);
       }
 
-
+      // Change underline datamap
       mapinfo.select('p').text('Total plastic waste generation by country, measured in tonnes per year.');
+
+      // Delete old legend and create legend for this datamap.
+      d3v5.select('#datamapLegend > *').remove();
+      legendDatasetCountry();
 
     }
     if (selectValue === 'Plastic waste per capita') {
@@ -154,9 +165,30 @@ function createMap(data) {
           map.updateChoropleth(colors);
       }
 
+      // Change underline datamap.
       mapinfo.select('p').text('Daily plastic waste generation per person, measured in kilograms per person per day.');
 
+      // Delete old legend, and create new one for this new dataset.
+      d3v5.select('#datamapLegend > *').remove();
+
+      var legend = d3v5.select('#datamapLegend')
+             .append('ul')
+             .attr('class', 'list-inline');
+
+      var keys = legend.selectAll('li.key')
+             .data(colors2);
+
+      var legend_items = ["No data", "< 0.1", "0.1 - 0.2", "0.2 - 0.3", "0.3 - 0.4", "> 0.4"];
+
+      keys.enter().append('li')
+             .attr('class', 'key')
+             .style('border-top-color', String)
+             .text(function (d, i) {
+                 return legend_items[i];
+             })
+             .style('text-anchor', 'middle');
     }
+
   }
 
   function countryMap() {
@@ -561,9 +593,6 @@ function createBarchart() {
 
     var tooltip = d3v5.select("#oceansinfo").attr("class", "toolTip");
 
-    // var colors = d3v5.scaleOrdinal(["#66c2a5","#fc8d62","#8da0cb","#e78ac3",
-    //                   "#a6d854","#ffd92f"]);
-
     var colors = d3v5.scaleOrdinal(d3v5.schemePaired);
 
     var oceans = [];
@@ -641,19 +670,9 @@ function createBarchart() {
     // Add x-axis label
     svg.append("text")
         .attr("class", "x-label")
-        .attr("transform","translate(" + chart_width / 2  + "," + (chart_height + 30) + ")")
+        .attr("transform","translate(" + chart_width / 2  + "," + (chart_height + 40) + ")")
         .style("text-achor", "middle")
         .text("Oceans");
-
-    // Add y-axis label
-    // svg.append("text")
-    //     .attr("class", "y-label")
-    //     .attr("transform","rotate(-90)")
-    //     .attr("y", padding / 2)
-    //     .attr("x", 0 - (chart_height / 2) - padding - 70)
-    //     .style("text-achor", "middle")
-    //     .text("Litres per capita");
-
 
   });
 }

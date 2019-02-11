@@ -44,12 +44,12 @@ li.key {
   border-top-style: solid;
   font-family: "Oxygen";
   color: #666;
-  font-size: 16px;
+  font-size: 14px;
   width: 10%;
   padding-left: 0;
   padding-right: 0;
   list-style:none;
 }
-li.key text {
-  text-anchor: end;
+img {
+  width: 100%;
 }
