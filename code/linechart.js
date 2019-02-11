@@ -38,8 +38,7 @@ function timelineChart() {
 
     function chart(selection) {
       /**
-      This function creates the linechart. Most of the function is based
-      on what M Bostock did on https://bl.ocks.org/mbostock/5649592.
+      This function creates the linechart.
       */
         selection.each(function (data) {
 
