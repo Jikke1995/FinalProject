@@ -7,8 +7,8 @@ Student number: 10787593
 Application goals: Inform people in general about world wide plastic pollution
 of the oceans, and create awareness of the size of this problem.  
 
-Press [here](https://jikke1995.github.io/FinalProject/) to visit the project webpage. 
-Press [here] to see the 'how to use' video. 
+Press [here](https://jikke1995.github.io/FinalProject/) to visit the project webpage.  
+Press [here](https://www.youtube.com/watch?v=6b_pQTLmd4g&feature=youtu.be) to see the 'how to use' video. 
 
 ## Purpose project
 Even though worldwide plastic pollution is a well-known problem, every year more than eight million tonnes of plastic is being dumped in the ocean. The problem is the rapid growth in plastic production in combination with a not so rapid growth in different ways of managing the plastic waste, like recycling. By illustrating these outrageous numbers of plastic production, waste generation and pollution of the oceans, the aim of this project is to help people realise the magnitude of the problem and hopefully do something about it themselves.  
