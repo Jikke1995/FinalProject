@@ -463,6 +463,10 @@ function donutChart(data) {
 }
 
 function prepareDataDonutOutside(data) {
+  /**
+  This function prepares the data into a usable format for the outer circle of
+  the piechart. 
+  */
   data['Rest Percentage'] = 100 - data['Own Percentage']
   dataset_donut = []
   datapoint = {}
