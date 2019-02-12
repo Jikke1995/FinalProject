@@ -12,30 +12,39 @@ The screenshot below shows a map of the world. While hovering over a country (Ch
 
 ## Technical Design  
 
-There consist five different visualisations in this project. Three of the five have their own JavaScript file, and two share one JavaScript file. This means that my main file relies on four different scripts.
+The index html leads the user to the homepage of this project. There are two options to navigate to: the visualisations page and the sources page. The visualisations page has it's own visualisations html (the most important one) and the sources page has it's own sources html. The index and sources html only contain text and don't use any functions or d3. The visualisations html does, and  relies on multiple JavaScript files.  
 
+There consist five different visualisations on this webpage. The first visualisation is a single-linegraph which stands on his own. It has it's own JavaScript file, linechart.js. Next there is a barchart which also stands on his own. It has his own JavaScript file as well, recycling.js. The datamap with the dropdownmenu and the piechart with the second layer share a JavaScript file, project.js. The last barchart has it's own JavaScript file again, oceanchart.js.  
+
+Now I will explain every JavaScript file more deeply.  
 
 main.js:  
-This is the main script that loads when the visualisations webpage is loaded.
-
-It uses the Promise.all() function for loading in the four different .json files
-and then combineData() to create one main datafile for the section with the datamap and piechart. After this it calls the function createMap() and donutChart() for these two visualisations. 
+This is the main script that loads when the visualisations webpage is loaded. It relies on all the other four JavaScript files.  
+First it uses the `timelineChart()` function from the linechart.js for creating the function that will draw a line + axes for some data. It then creates a function called `resize()` that makes sure that the size of the chart is dependent from the window size. Then, it loads in the data for the linechart and calls the line function to actually create the graph.  
+It then uses the `makeBarchart()` function from the recycling.js to create the first barchart.  
+After that, it uses the `Promise.all()` function for loading in the four different .json files and then `combineData()` (from project.js) to create one complete datafile for the section with the datamap and piechart. After this it calls the function `createMap()` and `donutChart()` for creating these two visualisations (from project.js).  
+At last, it uses the function `oceanChart()` fromt oceanchart.js to actually create the last barchart.
 
 linechart.js:  
-This file is used to create the single-line chart that shows the world wide plastics production from 1950 until 2015. It contains one main function (timelineChart) which returns the function for the line to the main file. In the mainfile I load in the data for the plastics production and call this function for the data with a resizing component so that is adapts to the size of the window.  
-For the transition of the line I used two different functions, transition() and tweenDash(). By interpolating the stroke-dasharray style property, you can animate a stroke from start to end.
+This file is used to create the single-line chart that shows the world wide plastics production from 1950 until 2015. It contains one main function `timelineChart() ` which returns the function that is gonna create a timeline-line to the main.js file. It consists of three different functions. For the transition of the line I used two different functions, `transition()` and `tweenDash()`. By interpolating the stroke-dasharray style property (to the function `tweenDash()`), it's possible to animate a stroke from start to end. The function `chart()` actually sets all the values given a selection for the axis, the line and the movement from beginning to end. It also sets the possibility for hovering over the path of the linegraph with the function `mousemove()`. A circle appears on the point of the year the user hovers over and it shows information on the right sight of the linechart. All the function on the bottom of the file are important for the resize function in the main.js file.
 
 recycling.js:  
-This file is used for creating the first barchart that shows the plastics generation for the USA from 1960 until 2015, and how much of this generation gets recycled, landfilled or combusted into Energy Recovery. It's main function is makeBarChart which (obviously) creates the barchart. It uses two extra functions for finding the minimum and maximum value in a stack.
+This file is used for creating the first barchart that shows the plastics generation for the USA from 1960 until 2015, and how much of this generation gets recycled, landfilled or combusted into Energy Recovery. It's main function is `makeBarChart()` which (obviously) creates the barchart when it's called in the main.js file. It uses two extra self-made functions for finding the minimum and maximum value in a stack (`stackMin()` and `stackMax()`). This `makeBarchart()` function is easily understandable, it's just stacking the data, setting the values/functions for the axis and the rectangles, creating a mousedown event (showing information about the part of the bar the user clicked on) and creating a legend.
 
 project.js:
+This file is a bit chaotic.  
+The `combineData()` function that the main.js file calls to combine the four datafiles together if the first function here. It takes the first datafile as the 'main' and adds the datapoints from the other files from the same countries together in this first datafile. Per country all the data about plastic waste is available in one dataset.  
+The `createMap()` function  
+The `roundtoTwo()` function is used in several parts of the code in this file to (surprisingly) round a number to two integers behind the period.  
+The `prepareDataDonutInside()` prepares the data into a usable format for the donutchart/piechart. It being used in several pieces of code in this project.js file, especially for making it easier to get information into the tooltips.  
+The `donutChart()` function creates the donutchart/piechart
 
 oceanchart.js:  
+This file is very similar to the recycling.js file. It's main function is `oceanChart()` which is calles in the main.js file to create the last barchart about the number of plastic particles floating in the six different ocean basins of the world. It sets the values/functions for the svg, the x- and y-scale and the rectangles. When hoovering over a bar a tooltip will apear which shows the exact datapoint.
 
 
 
 ## Challenges during the process  
-
+The resize function I used for the linechart is based on a project of Mike Bostock. I tried using it for other charts, to have a smooth resizing for them as well, but that seemed really harder than I thought. In the end I thought it wasn't the most important thing to focus on, but for a more smooth resize of the window (and so the visualisations) it would have been nicer if I accomplished that for the other visualisations as well.
 
 ## Defend of decisions
-The resize function I used for the linechart is based on a project of Mike Bostock. I tried using it for other charts, to have a smooth resizing for them as well, but that seemed really harder than I thought. In the end I thought it wasn't the most important thing to focus on, but for a more smooth resize of the window (and so the visualisations) it would have been nicer if I accomplished that for the other visualisations as well.

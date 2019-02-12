@@ -25,6 +25,7 @@ window.onload = function() {
         d3v5.select("#linechart").call(lines);
     }
 
+    // Creating the linegraph. 
     d3v5.json("global-plastic-production.json").then(function(data) {
         d3v5.select("#linechart").datum(data).call(lines);
           d3v5.select(window).on('resize', resize);

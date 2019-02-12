@@ -175,6 +175,8 @@ function timelineChart() {
         });
     }
 
+    // Setting up functions important for the resize() function in the main.js
+    // file (changing the width and height of the chart for example).
 
     chart.margin = function (_) {
         if (!arguments.length) return margin;
